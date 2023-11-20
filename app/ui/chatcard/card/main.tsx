@@ -42,8 +42,10 @@ export default function CardMain({ chatsStore, systemStore, msg, edit, setEdit }
                     <Button type="primary" icon={<CheckCircleOutlined />} onClick={submitEditHandler}>修改</Button>
                 </div>
             </div> :
-                <>{render ? <Markdown message={msg.message}></Markdown> :
-                    <pre className=' whitespace-pre-line'>{msg.message}</pre>}</>
+                <div className=' hover:cursor-text'>
+                    {render ? <Markdown message={msg.message}></Markdown> :
+                        <pre className=' whitespace-pre-line'>{msg.message}</pre>}
+                </div>
             }
         </div>
     )

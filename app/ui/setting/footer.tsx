@@ -1,9 +1,48 @@
-import { Button } from "antd"
+import { Button, Radio } from "antd"
+import { SettingOutlined, CommentOutlined, ThunderboltOutlined, AppstoreAddOutlined } from "@ant-design/icons"
+import { TSettingView } from "./setting"
 
-export default function Footer({onOpenSetting}:any) {
+export default function SettingFooter({ onOpenSetting, systemStore, view, setView }: any) {
+
+    const { isShowSetting, isShowCard } = systemStore
+
+    const switchViewHandler = (view: TSettingView) => () => {
+        setView(view)
+    }
+
+    const views: Array<{ name: string, view: TSettingView, icon: any }> = [
+        {
+            name: "聊天",
+            view: "main",
+            icon: <CommentOutlined />
+        },
+        {
+            name: "设置",
+            view: "config",
+            icon: <SettingOutlined />
+        },
+        {
+            name: "预设",
+            view: "prompt",
+            icon: <ThunderboltOutlined />
+        },
+        {
+            name: "插件",
+            view: "plugin",
+            icon: <AppstoreAddOutlined />
+        }
+    ]
+
     return (
         <div className="flex flex-col gap-1">
-            <Button type="primary" danger onClick={onOpenSetting}>关闭</Button>
+            <div className="flex gap-1">
+                <Button.Group className="w-full">
+                    {views.map((v, idx) => (
+                        <Button key={idx} icon={v.icon} block onClick={switchViewHandler(v.view)}
+                            type={v.view === view ? 'primary' : undefined}>{v.name}</Button>))}
+                </Button.Group>
+            </div>
+            {(isShowSetting && !isShowCard) && <Button type="primary" danger onClick={onOpenSetting}>关闭</Button>}
             <div className="flex justify-center border border-dashed rounded p-1">
                 Star on<Button type="link" size="small">GitHub</Button>@zmlix
             </div>

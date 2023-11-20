@@ -4,7 +4,6 @@ import { HomeOutlined, SendOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import { TMessage } from '@/app';
 import { random32BitNumber } from '@/app/utils/utils';
-import type { MenuProps } from 'antd';
 
 export default function InputBox({ onOpenSetting, chatsStore, systemStore }: any) {
 

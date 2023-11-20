@@ -1,25 +1,26 @@
 type TMessage = {
-    id: number,
-    message: any,
-    type: 'text' | 'img',
-    role: 'system' | 'user' | 'assistant',
-    createTime: Date,
-    updateTime: Date,
-    model: string,
-    fold: boolean,
-    render: boolean,
-    skip: boolean,
+    id: number
+    message: any
+    type: 'text' | 'img'
+    role: 'system' | 'user' | 'assistant'
+    createTime: Date
+    updateTime: Date
+    model: string
+    fold: boolean
+    render: boolean
+    skip: boolean
     token?: number
 }
 
 type TChatConfig = {
-    model: string,
-    title: string,
-    autoSkip: boolean,
-    temperature: number,
-    top_p: number,
-    frequency_penalty: number,
+    model: string
+    title: string
+    temperature: number
+    top_p: number
+    frequency_penalty: number
     presence_penalty: number
+    autoSkip: boolean
+    autoRender: boolean
 }
 
 type TChat = {
