@@ -1,10 +1,22 @@
 import { Button, Radio } from "antd"
 import { SettingOutlined, CommentOutlined, ThunderboltOutlined, AppstoreAddOutlined } from "@ant-design/icons"
 import { TSettingView } from "./setting"
+import { useSystemStore } from "@/app/store/system"
 
-export default function SettingFooter({ onOpenSetting, systemStore, view, setView }: any) {
+export default function SettingFooter({ view, setView }: any) {
 
-    const { isShowSetting, isShowCard } = systemStore
+    const systemStore = useSystemStore()
+    const { isShowSetting, isShowCard, setIsShowCard, setIsShowSetting } = systemStore
+
+    const OpenSettingHandler = () => {
+        setIsShowSetting(!isShowSetting)
+        if (window.innerWidth <= 768 && !isShowSetting) {
+            setIsShowCard(false)
+        } else {
+            setIsShowCard(true)
+        }
+    }
+
 
     const switchViewHandler = (view: TSettingView) => () => {
         setView(view)
@@ -42,8 +54,8 @@ export default function SettingFooter({ onOpenSetting, systemStore, view, setVie
                             type={v.view === view ? 'primary' : undefined}>{v.name}</Button>))}
                 </Button.Group>
             </div>
-            {(isShowSetting && !isShowCard) && <Button type="primary" danger onClick={onOpenSetting}>关闭</Button>}
-            <div className="flex justify-center border border-dashed rounded p-1">
+            {(isShowSetting && !isShowCard) && <Button type="primary" danger onClick={OpenSettingHandler}>关闭</Button>}
+            <div className="flex justify-center items-center border border-dashed rounded text-sm">
                 Star on<Button type="link" size="small">GitHub</Button>@zmlix
             </div>
         </div>

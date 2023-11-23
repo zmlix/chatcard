@@ -6,6 +6,8 @@ import {
 } from "@ant-design/icons";
 import { ChangeEvent, useEffect, useState } from "react";
 import copy from "copy-to-clipboard";
+import { useSystemStore } from "@/app/store/system"
+import { TSystemStore } from "@/app";
 
 function Prompt({ prompts, addPrompt, editPrompt, removePrompt }: any) {
     const { TextArea } = Input
@@ -178,11 +180,16 @@ function Role({ roles }: any) {
 }
 
 
-export default function SettingPrompt({ systemStore }: any) {
+export default function SettingPrompt() {
+    console.log("SettingPrompt")
     type Tab = 'prompt' | 'role'
     const [tab, setTab] = useState<Tab>('prompt')
 
-    const { prompts, addPrompt, editPrompt, removePrompt } = systemStore
+    const prompts = useSystemStore((state: TSystemStore) => state.prompts)
+    const addPrompt = useSystemStore((state: TSystemStore) => state.addPrompt)
+    const editPrompt = useSystemStore((state: TSystemStore) => state.editPrompt)
+    const removePrompt = useSystemStore((state: TSystemStore) => state.removePrompt)
+
     const setTabHandler = (t: Tab) => () => {
         setTab(t)
     }

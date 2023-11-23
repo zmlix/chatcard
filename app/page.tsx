@@ -2,52 +2,31 @@
 import { useEffect, useState } from "react"
 import Setting from "./ui/setting/setting"
 import ChatCard from "./ui/chatcard/chatCard"
-import { useChatsStore } from "./store/chats"
 import { useSystemStore } from "./store/system"
+import { TSystemStore } from "."
 
 export default function App() {
+  console.log("app")
 
-  const chatsStore = useChatsStore()
-  const systemStore = useSystemStore()
-
-  const { isShowSetting, isShowCard, setIsShowSetting, setIsShowCard, initPrompts } = systemStore
+  const isShowSetting = useSystemStore((state: TSystemStore) => state.isShowSetting)
+  const isShowCard = useSystemStore((state: TSystemStore) => state.isShowCard)
+  const initPrompts = useSystemStore((state: TSystemStore) => state.initPrompts)
 
   useEffect(() => {
     console.log("initPrompts")
     initPrompts()
   }, [initPrompts])
 
-  function openSettingHandler() {
-    setIsShowSetting(!isShowSetting)
-    if (window.innerWidth <= 768 && !isShowSetting) {
-      setIsShowCard(false)
-    } else {
-      setIsShowCard(true)
-    }
-  }
-
-  const SettingProps = {
-    openSettingHandler,
-    chatsStore,
-    systemStore
-  }
-
-  const ChatCardProps = {
-    openSettingHandler,
-    chatsStore,
-    systemStore
-  }
-
   const settingClass = "flex flex-col gap-1 bg-white border rounded-2xl p-2 "
   const chatCardClass = "flex flex-col bg-white border rounded-2xl p-2"
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 w-full">
       <div id='chatsetting' className={isShowSetting ? settingClass : 'hidden'}>
-        <Setting {...SettingProps}></Setting>
+        <Setting></Setting>
       </div>
       <div id='chatcard' className={isShowCard ? chatCardClass : 'hidden'}>
-        <ChatCard {...ChatCardProps}></ChatCard>
+        <ChatCard></ChatCard>
       </div>
     </div>
   )

@@ -3,19 +3,30 @@ import { Button, Input, Space, Popconfirm } from "antd"
 import { DeleteFilled, FormOutlined, CheckOutlined, QuestionCircleOutlined, PlusOutlined } from "@ant-design/icons"
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { useChatsStore } from "@/app/store/chats"
+import { TChatsStore } from "@/app";
 
-export default function SettingChatCard({ cid, chat, setCurrentChat, currentChat, removeChat, setConfig }: any) {
+export default function SettingChatCard({ cid, index }: any) {
+    console.log("SettingChatCard")
+
+    const currentChat = useChatsStore((state: TChatsStore) => state.currentChat)
+    const setCurrentChat = useChatsStore((state: TChatsStore) => state.setCurrentChat)
+    const removeChat = useChatsStore((state: TChatsStore) => state.removeChat)
+    const setConfig = useChatsStore((state: TChatsStore) => state.setConfig)
+
+    const chatTitle = useChatsStore((state: TChatsStore) => state.chats[index].config.title)
+    const messageNumber = useChatsStore((state: TChatsStore) => state.chats[index].messages.length)
 
     const openChatHandler = () => {
-        setCurrentChat(chat.index)
+        setCurrentChat(index)
     }
 
     const removeChatHandler = () => {
-        removeChat(chat.index)
+        removeChat(index)
     }
 
     const [edit, setEdit] = useState(false)
-    const [title, setTitle] = useState(chat.title)
+    const [title, setTitle] = useState(chatTitle)
 
     const editChatHandler = () => {
         setEdit(!edit)
@@ -25,7 +36,7 @@ export default function SettingChatCard({ cid, chat, setCurrentChat, currentChat
         if (title.length === 0) {
             return
         }
-        setConfig(chat.index, 'title', title)
+        setConfig('title', title)
         setEdit(!edit)
     }
 
@@ -48,7 +59,7 @@ export default function SettingChatCard({ cid, chat, setCurrentChat, currentChat
     const className = "flex items-center h-16 justify-between border hover:cursor-pointer group "
     return (
         <>
-            <div ref={preview} style={style} {...attributes} className={currentChat === chat.index ? className + "bg-zinc-200" : className + "bg-white"}>
+            <div ref={preview} style={style} {...attributes} className={currentChat === index ? className + "bg-zinc-200" : className + "bg-white"}>
                 <div className="m-2 w-full">
                     {edit ? <div>
                         <Space.Compact style={{ width: '100%' }}>
@@ -62,11 +73,11 @@ export default function SettingChatCard({ cid, chat, setCurrentChat, currentChat
                         <div className="w-48">
                             <div className='flex w-48 h-6'>
                                 <div className='truncate text-ellipsis hover:cursor-text'>
-                                    {chat.title}
+                                    {chatTitle}
                                 </div>
                             </div>
                             <div className="font-serif text-sm text-stone-600">
-                                {chat.number} 条对话
+                                {messageNumber} 条对话
                             </div>
                         </div>
                     </div>

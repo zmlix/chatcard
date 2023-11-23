@@ -1,50 +1,12 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import prompt_zh from "@/app/data/prompts_zh"
-
-type TSystemConfig = {
-    api_url: string
-    api_key: string
-    model: string
-    temperature: number
-    top_p: number
-    frequency_penalty: number
-    presence_penalty: number
-    autoSkip: boolean
-    autoRender: boolean
-    seed?: number
-}
-
-type TPrompts = {
-    prompt: Array<any>
-    role: Array<any>
-}
-
-type TSystemStoreState = {
-    config: TSystemConfig
-    currentChat: number
-    isSending: boolean
-    isShowSetting: boolean
-    isShowCard: boolean
-    prompts: TPrompts
-}
-
-type TSystemStoreAction = {
-    setCurrentChat: (idx: number) => void
-    setIsSending: (s: boolean) => void
-    setIsShowSetting: (s: boolean) => void
-    setIsShowCard: (s: boolean) => void
-    resetConfig: () => void
-    initPrompts: () => void
-    addPrompt: (p: any) => boolean
-    editPrompt: (act: string, prompt: string) => void
-    removePrompt: (act: string) => void
-}
+import { TSystemConfig, TSystemStoreAction, TSystemStoreState } from '..'
 
 const config: TSystemConfig = {
     api_url: 'https://api.openai.com/v1/chat/completions',
     api_key: '',
-    model: 'gpt-3.5',
+    model: 'gpt-3.5-turbo',
     temperature: 1,
     top_p: 1,
     frequency_penalty: 0,
@@ -57,14 +19,18 @@ const config: TSystemConfig = {
 export const useSystemStore = create<TSystemStoreState & TSystemStoreAction>()(
     immer((set, get) => ({
         config: config,
-        currentChat: 0,
         isSending: false,
         isShowSetting: true,
         isShowCard: true,
+        needScroll: false,
         prompts: {
             prompt: [],
             role: []
         },
+        models: [
+            { value: 'gpt-3.5-turbo', label: 'gpt-3.5-turbo' },
+            { value: 'gpt-4', label: 'gpt-4' },
+        ],
         setConfig: (attr: string, value: any) =>
             set((state) => {
                 state.config = {
@@ -75,10 +41,6 @@ export const useSystemStore = create<TSystemStoreState & TSystemStoreAction>()(
         resetConfig: () =>
             set((state) => {
                 state.config = config
-            }),
-        setCurrentChat: (idx: number) =>
-            set((state) => {
-                state.currentChat = idx
             }),
         setIsSending: (s: boolean) =>
             set((state) => {
@@ -125,6 +87,14 @@ export const useSystemStore = create<TSystemStoreState & TSystemStoreAction>()(
                     }
                 })
             })
-        }
+        },
+        setModels: (models: Array<any>) =>
+            set((state) => {
+                state.models = models
+            }),
+        setNeedScroll: (scroll: boolean) =>
+            set((state) => {
+                state.needScroll = scroll
+            })
     }))
 )

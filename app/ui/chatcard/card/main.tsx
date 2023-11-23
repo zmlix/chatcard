@@ -1,33 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, memo } from 'react';
 import { Input, Button } from 'antd'
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import Markdown from './markdown';
+import { useChatsStore } from "@/app/store/chats"
+import { TChatsStore } from '@/app';
 
 
-export default function CardMain({ chatsStore, systemStore, msg, edit, setEdit }: any) {
+export default memo(function CardMain({ message, render, edit, quitEditHandler, submitEditHandler }: any) {
+
     const { TextArea } = Input;
-
-    const { render } = msg
-    const [text, setText] = useState(msg.message)
-    const { setMessage } = chatsStore
-    const { currentChat } = systemStore
-
-
-    const submitEditHandler = () => {
-        setMessage(currentChat, msg.id, 'message', text)
-        setMessage(currentChat, msg.id, 'updateTime', new Date())
-        setEdit(!edit)
-    }
-
-    const quitEditHandler = () => {
-        setEdit(!edit)
-    }
+    const [text, setText] = useState(message)
 
     useEffect(() => {
         if (edit) {
-            setText(msg.message)
+            setText(message)
         }
-    }, [edit, msg])
+    }, [edit, message])
 
     return (
         <div className='p-2 font-mono'>
@@ -39,14 +27,14 @@ export default function CardMain({ chatsStore, systemStore, msg, edit, setEdit }
                 />
                 <div className='flex gap-1'>
                     <Button icon={<CloseCircleOutlined />} onClick={quitEditHandler}>放弃</Button>
-                    <Button type="primary" icon={<CheckCircleOutlined />} onClick={submitEditHandler}>修改</Button>
+                    <Button type="primary" icon={<CheckCircleOutlined />} onClick={submitEditHandler(text)}>修改</Button>
                 </div>
             </div> :
                 <div className=' hover:cursor-text'>
-                    {render ? <Markdown message={msg.message}></Markdown> :
-                        <pre className=' whitespace-pre-line'>{msg.message}</pre>}
+                    {render ? <Markdown message={message}></Markdown> :
+                        <pre className=' whitespace-pre-line'>{message}</pre>}
                 </div>
             }
         </div>
     )
-}
+})

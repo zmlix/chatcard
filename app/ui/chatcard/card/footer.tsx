@@ -1,55 +1,31 @@
-import { Switch, Select } from 'antd';
+import { Select, Spin } from 'antd';
+import { memo } from "react";
+import { useSystemStore } from '@/app/store/system';
+import { TSystemStore } from '@/app';
 
-
-export default function CardFooter({ msg, chatsStore, systemStore }: any) {
-
-    const { fold } = msg
-    const { setMessage } = chatsStore
-    const { currentChat } = systemStore
-
-    const renderHandler = (checked: boolean) => {
-        console.log("render...", checked)
-        setMessage(currentChat, msg.id, 'render', checked)
-    }
-
-    const skipHandler = (checked: boolean) => {
-        console.log("skip...", checked)
-        setMessage(currentChat, msg.id, 'skip', checked)
-    }
-
-    const modelHandler = (value: string) => {
-        console.log("model...", value)
-        setMessage(currentChat, msg.id, 'model', value)
-    }
+export default memo(function CardFooter({ loading, role, fold, message, model, modelHandler }: any) {
+    const modelOptions = useSystemStore((state: TSystemStore) => state.models)
 
     return (
         <>
             {fold && <div className='flex w-80'>
                 <div className='truncate text-ellipsis p-2'>
-                    {msg.message}
+                    {message}
                 </div>
             </div>}
-            <div className='flex justify-between border-t pl-1 pr-1'>
-                <div className='font-mono w-max mt-0.5 mb-0.5 h-6'>
-                    {msg.role === 'user' && <Select
-                        defaultValue="gpt-3.5"
+            <div className='flex justify-between border-t'>
+                <div className='ml-2'><Spin className={loading ? '' : 'hidden'} size="small" /></div>
+                <div className='w-max mb-0.5 h-6'>
+                    {role === 'user' ? <Select
+                        bordered={false}
+                        defaultValue={model}
                         size="small"
-                        style={{ width: 120 }}
+                        style={{ width: 200, textAlign: 'right' }}
                         onChange={modelHandler}
-                        options={[
-                            { value: 'gpt-3.5', label: 'gpt-3.5' },
-                            { value: 'gpt-3.5-turbo-16k-0613', label: 'gpt-3.5-turbo-16k-0613' },
-                            { value: 'gpt-4', label: 'gpt-4' },
-                        ]}
-                    />}
-                </div>
-                <div className='flex gap-1 items-center justify-end'>
-                    <Switch size="small" className='bg-zinc-400' checkedChildren="渲染"
-                        unCheckedChildren="渲染" checked={msg.render} onChange={renderHandler} />
-                    <Switch size="small" className='bg-zinc-400' checkedChildren="跳过"
-                        unCheckedChildren="跳过" checked={msg.skip} onChange={skipHandler} />
+                        options={modelOptions}
+                    /> : <span className='mr-3 font-serif text-sm'>{model}</span>}
                 </div>
             </div>
         </>
     )
-}
+})
