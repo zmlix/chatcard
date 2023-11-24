@@ -43,6 +43,7 @@ export default memo(function CardBox() {
             id: random32BitNumber(),
             message: problem,
             type: 'text',
+            status: 'success',
             role: 'user',
             createTime: new Date(),
             updateTime: new Date(),

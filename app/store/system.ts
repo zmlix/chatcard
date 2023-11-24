@@ -20,6 +20,7 @@ export const useSystemStore = create<TSystemStoreState & TSystemStoreAction>()(
     immer((set, get) => ({
         config: config,
         isSending: false,
+        sendingMsgId: 0,
         isShowSetting: true,
         isShowCard: true,
         needScroll: false,
@@ -45,6 +46,10 @@ export const useSystemStore = create<TSystemStoreState & TSystemStoreAction>()(
         setIsSending: (s: boolean) =>
             set((state) => {
                 state.isSending = s
+            }),
+        setSendingMsgId: (msgId: number) =>
+            set((state) => {
+                state.sendingMsgId = msgId
             }),
         setIsShowSetting: (s: boolean) =>
             set((state) => {

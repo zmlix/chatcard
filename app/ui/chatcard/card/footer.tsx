@@ -3,7 +3,7 @@ import { memo } from "react";
 import { useSystemStore } from '@/app/store/system';
 import { TSystemStore } from '@/app';
 
-export default memo(function CardFooter({ loading, role, fold, message, model, modelHandler }: any) {
+export default memo(function CardFooter({ loading, role, fold, message, model, status, modelHandler }: any) {
     const modelOptions = useSystemStore((state: TSystemStore) => state.models)
 
     return (
@@ -23,7 +23,7 @@ export default memo(function CardFooter({ loading, role, fold, message, model, m
                         style={{ width: 200, textAlign: 'right' }}
                         onChange={modelHandler}
                         options={modelOptions}
-                    /> : <span className='mr-3 font-serif block'>{model}</span>}
+                    /> : <span className='mr-3 font-serif block'>{status === 'success' ? model : status}</span>}
                 </div>
             </div>}
         </>

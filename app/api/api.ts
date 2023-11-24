@@ -10,6 +10,7 @@ export function sendMessageApi(message: TMessage, resend?: boolean) {
     const chatConfig: TChatConfig = useChatsStore.getState().getConfig()
     const systemConfig: TSystemConfig = useSystemStore.getState().config
     const setIsSending = useSystemStore.getState().setIsSending
+    const setSendingMsgId = useSystemStore.getState().setSendingMsgId
 
     try {
         message.model = message.model === '' ? chatConfig.model : message.model
@@ -23,6 +24,7 @@ export function sendMessageApi(message: TMessage, resend?: boolean) {
         id: msgId,
         message: "",
         type: 'text',
+        status: 'loading',
         role: 'assistant',
         createTime: new Date(),
         updateTime: new Date(),
@@ -47,6 +49,7 @@ export function sendMessageApi(message: TMessage, resend?: boolean) {
     }
     // console.log(resend, message)
     setIsSending(true)
+    setSendingMsgId(msgId)
     let msgContent = ""
     const sse = new SSE(
         systemConfig.api_url,
@@ -92,6 +95,7 @@ export function sendMessageApi(message: TMessage, resend?: boolean) {
                     JSON.stringify({ details: '解析错误' }, null, 4) +
                     '\n```'
                 )
+                useChatsStore.getState().setMessage(msgId, 'status', 'error')
                 return
             }
         }
@@ -103,19 +107,23 @@ export function sendMessageApi(message: TMessage, resend?: boolean) {
             sse.close()
             return
         }
-        // console.log(payload);
-        // console.log("sending", useSystemStore.getState().isSending)
         msgContent += payload.choices[0].delta.content
         useChatsStore.getState().setMessage(msgId, 'model', payload.model)
         useChatsStore.getState().setMessage(msgId, 'message', msgContent)
-    });
+    })
     sse.addEventListener('readystatechange', (e: any) => {
+        console.log(e)
         if (e.readyState >= 2) {
+            if (!useSystemStore.getState().isSending) {
+                return
+            }
             useChatsStore.getState().setMessage(msgId, 'loading', false)
             if (resend === undefined || resend === false) {
                 useSystemStore.getState().setNeedScroll(true)
             }
+            useChatsStore.getState().setMessage(msgId, 'status', 'success')
             setIsSending(false)
+            setSendingMsgId(0)
         }
     })
     sse.addEventListener('error', (e: any) => {
@@ -132,9 +140,12 @@ export function sendMessageApi(message: TMessage, resend?: boolean) {
                     error_msg = JSON.parse(match[0])
                 } else {
                     error_msg = { details: '未知错误' }
+                    useChatsStore.getState().setMessage(msgId, 'status', 'error')
+
                 }
             } else {
                 error_msg = { details: '未知错误' }
+                useChatsStore.getState().setMessage(msgId, 'status', 'error')
             }
         }
         useChatsStore.getState().setMessage(msgId, 'message',
@@ -142,7 +153,7 @@ export function sendMessageApi(message: TMessage, resend?: boolean) {
             JSON.stringify(error_msg, null, 4) +
             '\n```'
         )
-        useChatsStore.getState().setMessage(msgId, 'model', 'error')
+        useChatsStore.getState().setMessage(msgId, 'status', 'error')
         useChatsStore.getState().setMessage(msgId, 'skip', true)
         useChatsStore.getState().setMessage(msgId, 'loading', false)
         if (resend === undefined || resend === false) {

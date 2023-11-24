@@ -14,6 +14,7 @@ const message: TMessage = {
   id: random32BitNumber(),
   message: "empty",
   type: 'text',
+  status: 'success',
   role: 'user',
   createTime: new Date(),
   updateTime: new Date(),

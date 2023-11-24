@@ -43,12 +43,14 @@ export default function InputBox() {
     const modelOptions = useSystemStore((state: TSystemStore) => state.models)
     const defalutModel = useChatsStore((state: TChatsStore) => state.getConfig().model)
     const promptList = useSystemStore((state: TSystemStore) => state.prompts.prompt)
+    const sendingMsgId = useSystemStore((state: TSystemStore) => state.sendingMsgId)
     const setIsShowCard = useSystemStore((state: TSystemStore) => state.setIsShowCard)
     const setIsShowSetting = useSystemStore((state: TSystemStore) => state.setIsShowSetting)
     const clearMessage = useChatsStore((state: TChatsStore) => state.clearMessage)
     const removeChat = useChatsStore((state: TChatsStore) => state.removeChat)
     const setCurrentChat = useChatsStore((state: TChatsStore) => state.setCurrentChat)
     const newChat = useChatsStore((state: TChatsStore) => state.newChat)
+    const setMessage = useChatsStore((state: TChatsStore) => state.setMessage)
 
     const OpenSettingHandler = () => {
         setIsShowSetting(!isShowSetting)
@@ -73,6 +75,7 @@ export default function InputBox() {
             id: random32BitNumber(),
             message: text,
             type: 'text',
+            status: 'success',
             role: 'user',
             createTime: new Date(),
             updateTime: new Date(),
@@ -180,6 +183,15 @@ export default function InputBox() {
             }
         })
     }, [])
+
+    useEffect(() => {
+        if (!isSending) {
+            setMessage(sendingMsgId, 'loading', false)
+            if (sendingMsgId !== 0) {
+                setMessage(sendingMsgId, 'status', 'stop')
+            }
+        }
+    }, [isSending, setMessage, sendingMsgId])
 
     return (
         <>

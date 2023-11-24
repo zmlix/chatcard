@@ -1,7 +1,8 @@
 type TMessage = {
     id: number
     message: any
-    type: 'text' | 'img' | 'error'
+    type: 'text' | 'img'
+    status: 'success' | 'loading' | 'error' | 'stop'
     role: 'system' | 'user' | 'assistant'
     createTime: Date
     updateTime: Date
@@ -82,6 +83,7 @@ type TPrompts = {
 type TSystemStoreState = {
     config: TSystemConfig
     isSending: boolean
+    sendingMsgId: number
     isShowSetting: boolean
     isShowCard: boolean
     needScroll: boolean
@@ -92,6 +94,7 @@ type TSystemStoreState = {
 type TSystemStoreAction = {
     setConfig: (attr: string, value: any) => void
     setIsSending: (s: boolean) => void
+    setSendingMsgId: (msgId: number) => void
     setIsShowSetting: (s: boolean) => void
     setIsShowCard: (s: boolean) => void
     resetConfig: () => void

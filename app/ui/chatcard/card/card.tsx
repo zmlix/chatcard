@@ -96,6 +96,7 @@ export default memo(function Card({ mid }: any) {
         fold: msg.fold,
         message: msg.message,
         model: msg.model,
+        status: msg.status,
         modelHandler
     }
 
