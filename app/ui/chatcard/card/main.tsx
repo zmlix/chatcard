@@ -18,7 +18,7 @@ export default memo(function CardMain({ message, render, edit, quitEditHandler, 
     }, [edit, message])
 
     return (
-        <div className='p-2 font-mono'>
+        <div className='p-2 font-mono text-sm'>
             {edit ? <div className='flex flex-col gap-1 items-end'>
                 <TextArea
                     value={text}

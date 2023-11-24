@@ -41,9 +41,17 @@ export const useChatsStore = create<TChatsStore>()(
       }
       return get().chats[get().currentChat]
     },
-    setCurrentChat: (idx: number) =>
+    setCurrentChat: (idx: number | string | undefined) =>
       set((state) => {
-        state.currentChat = idx
+        if (typeof idx === 'number') {
+          state.currentChat = idx % state.chats.length
+        }
+        if (typeof idx === 'string') {
+          state.currentChat = (state.currentChat + parseInt(idx)) % state.chats.length
+        }
+        if (typeof idx === 'undefined') {
+          state.currentChat = state.chats.length - 1
+        }
       }),
     getChats: () => {
       return get().chats
@@ -75,8 +83,11 @@ export const useChatsStore = create<TChatsStore>()(
 
         state.chats.push(chat)
       }),
-    removeChat: (idx: number) =>
+    removeChat: (chatId: number | undefined = undefined) =>
       set((state) => {
+        if (chatId === undefined) {
+          chatId = get().currentChat
+        }
         if (state.chats.length === 1) {
           const chat: TChat = {
             id: random32BitNumber(),
@@ -89,7 +100,7 @@ export const useChatsStore = create<TChatsStore>()(
 
           state.chats = Array<TChat>(chat)
         } else {
-          state.chats.splice(idx, 1)
+          state.chats.splice(chatId, 1)
         }
       }),
     moveMessages: (from: number, to: number, chatId: number | undefined = undefined) =>
@@ -135,6 +146,13 @@ export const useChatsStore = create<TChatsStore>()(
     removeMessage: (chatId: number, msgId: number) =>
       set((state) => {
         state.chats[chatId].messages = state.chats[chatId].messages.filter((msg: TMessage) => msg.id !== msgId)
+      }),
+    clearMessage: (chatId: number | undefined = undefined) =>
+      set((state) => {
+        if (chatId === undefined) {
+          chatId = get().currentChat
+        }
+        state.chats[chatId].messages = Array<TMessage>()
       }),
     setMessage: (msgId: number, attr: string, value: any, chatId: number | undefined = undefined) =>
       set((state: any) => {

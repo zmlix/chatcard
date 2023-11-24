@@ -38,23 +38,24 @@ type TChatsStoreState = {
 
 type TChatsStoreAction = {
     getCurrentChat: () => TChat
-    setCurrentChat: (idx: number) => void
+    setCurrentChat: (idx?: number | string) => void
     getChatsNumber: () => number
     getChats: () => Array<TChat>
     getChatsName: () => Array<any>
     newChat: () => void
     changeChats: (chats: Array<TChat>) => void
-    removeChat: (idx: number) => void
+    removeChat: (chatId?: number) => void
     moveChats: (from: number, to: number) => void
-    moveMessages: (from: number, to: number, chatId?: number | undefined) => void
+    moveMessages: (from: number, to: number, chatId?: number) => void
     changeMessages: (chatId: number, messages: Array<TMessage>) => void
     newMessage: (chatId: number) => void
     addMessage: (msg: TMessage, pos?: number, chatId?: number) => void
     removeMessage: (chatId: number, msgId: number) => void
+    clearMessage: (chatId?: number) => void
     setMessage: (msgId: number, attr: string, value: any, chatId?: number) => void
-    getConfig: (chatId: number | undefined = undefined) => TChatConfig
+    getConfig: (chatId?: number) => TChatConfig
     setConfig: (attr: string, value: any, chatId?: number) => void
-    getMessage: (msgId: number, chatId: number | undefined = undefined) => TMessage
+    getMessage: (msgId: number, chatId?: number) => TMessage
     getMessages: (chatId: number) => Array<TMessage>
 }
 

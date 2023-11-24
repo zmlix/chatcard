@@ -8,14 +8,14 @@ export default memo(function CardFooter({ loading, role, fold, message, model, m
 
     return (
         <>
-            {fold && <div className='flex w-80'>
+            {fold && <div className='flex'>
                 <div className='truncate text-ellipsis p-2'>
                     {message}
                 </div>
             </div>}
-            <div className='flex justify-between border-t'>
+            {!fold && <div className='flex justify-between items-center border-t h-6'>
                 <div className='ml-2'><Spin className={loading ? '' : 'hidden'} size="small" /></div>
-                <div className='w-max mb-0.5 h-6'>
+                <div className='w-max'>
                     {role === 'user' ? <Select
                         bordered={false}
                         defaultValue={model}
@@ -23,9 +23,9 @@ export default memo(function CardFooter({ loading, role, fold, message, model, m
                         style={{ width: 200, textAlign: 'right' }}
                         onChange={modelHandler}
                         options={modelOptions}
-                    /> : <span className='mr-3 font-serif text-sm'>{model}</span>}
+                    /> : <span className='mr-3 font-serif block'>{model}</span>}
                 </div>
-            </div>
+            </div>}
         </>
     )
 })
