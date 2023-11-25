@@ -11,6 +11,7 @@ const config: TSystemConfig = {
     top_p: 1,
     frequency_penalty: 0,
     presence_penalty: 0,
+    max_tokens: 0,
     autoSkip: false,
     autoRender: true,
     seed: 0
@@ -43,6 +44,9 @@ export const useSystemStore = create<TSystemStoreState & TSystemStoreAction>()(
             set((state) => {
                 state.config = config
             }),
+        getIsSending: () => {
+            return get().isSending
+        },
         setIsSending: (s: boolean) =>
             set((state) => {
                 state.isSending = s

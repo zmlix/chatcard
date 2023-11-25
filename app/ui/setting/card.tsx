@@ -29,6 +29,7 @@ export default function SettingChatCard({ cid, index }: any) {
     const [title, setTitle] = useState(chatTitle)
 
     const editChatHandler = () => {
+        setTitle(chatTitle)
         setEdit(!edit)
     }
 

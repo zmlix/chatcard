@@ -1,7 +1,7 @@
 'use client'
-import { Button, Select, Dropdown, message, Input } from 'antd';
-import { HomeOutlined, SendOutlined } from '@ant-design/icons';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { Button, Select, Dropdown, message, Input, Upload, UploadFile, Avatar } from 'antd';
+import { HomeOutlined, SendOutlined, SmileOutlined, UploadOutlined } from '@ant-design/icons';
+import { ChangeEvent, memo, useEffect, useRef, useState } from 'react';
 import { TChatsStore, TMessage, TSystemStore } from '@/app';
 import { random32BitNumber } from '@/app/utils/utils';
 import { sendMessageApi } from '@/app/api/api';
@@ -9,6 +9,10 @@ import { useSystemStore } from "@/app/store/system"
 import { useChatsStore } from '@/app/store/chats';
 import { TextAreaRef } from 'antd/es/input/TextArea';
 import { BaseSelectRef } from 'rc-select/lib/BaseSelect'
+import data from '@emoji-mart/data'
+import Picker from '@emoji-mart/react'
+import { UploadChangeParam } from 'antd/es/upload';
+import { UploadListType } from 'antd/es/upload/interface';
 
 const cmdList = [
     {
@@ -33,7 +37,7 @@ const cmdList = [
     },
 ]
 
-export default function InputBox() {
+export default memo(function InputBox() {
     console.log("InputBox")
     const { TextArea } = Input;
     const [text, setText] = useState('')
@@ -84,7 +88,18 @@ export default function InputBox() {
             render: true,
             skip: false,
         }
-        sendMessageApi(msg)
+        console.log(msg)
+        if (fileList.length !== 0) {
+            sendMessageApi(msg, false, fileList.map((f) => ({
+                type: 'img',
+                data: f.thumbUrl
+            })))
+        } else {
+            sendMessageApi(msg)
+        }
+        setEmoji(false)
+        setUpload(false)
+        setFileList([])
         setText('')
     }
 
@@ -193,6 +208,40 @@ export default function InputBox() {
         }
     }, [isSending, setMessage, sendingMsgId])
 
+    const [emoji, setEmoji] = useState(false)
+
+    const onEmojiSelectHandler = (option: any, e: PointerEvent) => {
+        console.log(option, e)
+        const start = textRef.current?.resizableTextArea?.textArea.selectionStart
+        const end = textRef.current?.resizableTextArea?.textArea.selectionEnd
+        const emojiLen = option.native.length
+        const newText = text.slice(0, start) + option.native + text.slice(start)
+        setText(newText)
+        setTimeout(() => {
+            textRef.current?.focus()
+            if (textRef.current?.resizableTextArea?.textArea.selectionStart && start) {
+                textRef.current.resizableTextArea.textArea.selectionStart = start + emojiLen
+            }
+            if (textRef.current?.resizableTextArea?.textArea.selectionEnd && end) {
+                textRef.current.resizableTextArea.textArea.selectionEnd = end + emojiLen
+            }
+        }, 100)
+    }
+
+    const [upload, setUpload] = useState(false)
+    const [fileList, setFileList] = useState<UploadFile[]>([])
+
+    const uploadAction = (option: any) => {
+        return option.onSuccess()
+    }
+
+    const uploadFileHandler = (info: UploadChangeParam<UploadFile<any>>) => {
+        console.log(info)
+        let newFileList = [...info.fileList];
+        newFileList = newFileList.slice(-5);
+        setFileList(newFileList)
+    }
+
     return (
         <>
             {mention && <Select
@@ -217,22 +266,51 @@ export default function InputBox() {
                     </div>
                 )}
             />}
-            <div className='flex gap-2 items-center'>
+            <div className={upload ? 'absolute right-8 bottom-16 w-64 min-h-36 bg-white mb-2 border rounded-2xl p-2' : 'hidden'}>
+                <Upload
+                    customRequest={uploadAction}
+                    accept='image/*'
+                    listType="picture"
+                    multiple
+                    fileList={fileList}
+                    onChange={uploadFileHandler}
+                >
+                    <div className='flex gap-2 items-center'>
+                        <Button icon={<UploadOutlined />}>上传</Button>
+                        <span>请选择文件</span>
+                    </div>
+                </Upload>
+            </div>
+            <div className='flex gap-1 items-center group'>
                 <div className='flex flex-col justify-end h-full'>
                     <Button shape="circle" icon={<HomeOutlined />} onClick={OpenSettingHandler}></Button>
                 </div>
                 <TextArea
+                    className='w-full'
                     ref={textRef}
                     value={text}
                     autoSize={{ minRows: 1, maxRows: 10 }}
-                    placeholder='Ctrl+Enter 发送'
+                    placeholder='Ctrl+Enter发送 /触发补全 :触发命令'
                     onChange={onChangeHandler}
                     onPressEnter={inputEnterHandler}
                 />
-                <div className='flex flex-col justify-end h-full'>
+                <div className='flex items-end gap-1 h-full'>
+                    <div className='hidden group-hover:flex' >
+                        <Button.Group>
+                            <Button style={{ width: 30 }} shape="circle"
+                                icon={<SmileOutlined />} block onClick={() => setEmoji(!emoji)} />
+                            <Button style={{ width: 30 }} shape="circle"
+                                icon={<UploadOutlined />} block onClick={() => setUpload(!upload)} />
+                        </Button.Group>
+                    </div>
                     <Dropdown.Button type="primary" icon={<SendOutlined />} onClick={submitHandler()} menu={{ items: modelOptions, onClick: submitWithModelHandler }}>发送</Dropdown.Button>
+                </div>
+                <div className={emoji ? 'absolute right-8 bottom-16 flex flex-row-reverse mb-2 z-50' : 'hidden'}>
+                    <Picker data={data} perLine={9} maxFrequentRows={1} emojiSize={16}
+                        emojiButtonSize={24} locale={'zh'} previewPosition={'none'}
+                        theme={'light'} onEmojiSelect={onEmojiSelectHandler} />
                 </div>
             </div>
         </>
     )
-}
+})

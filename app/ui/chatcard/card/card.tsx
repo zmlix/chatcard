@@ -3,10 +3,11 @@ import CardMain from './main';
 import CardFooter from './footer';
 import { useState, memo } from 'react';
 import { useChatsStore } from "@/app/store/chats"
-import { TChatsStore, TMessage } from '@/app';
-import type { MenuProps } from 'antd';
+import { TChatsStore, TMessage, TSystemStore } from '@/app';
+import { message, type MenuProps } from 'antd';
 import { useShallow } from 'zustand/react/shallow';
 import { sendMessageApi } from '@/app/api/api';
+import { useSystemStore } from '@/app/store/system';
 
 export default memo(function Card({ mid }: any) {
     console.log("card", mid)
@@ -16,6 +17,10 @@ export default memo(function Card({ mid }: any) {
     const msg: TMessage = useChatsStore(useShallow((state: TChatsStore) => state.getMessage(mid)))
     const setMessage = useChatsStore((state: TChatsStore) => state.setMessage)
     const removeMessage = useChatsStore((state: TChatsStore) => state.removeMessage)
+    const getIsSending = useSystemStore((state: TSystemStore) => state.getIsSending)
+
+    const renderMsg = (typeof msg.message === 'string' ? msg.message :
+        (msg.message[0].text + '\n' + (msg.message.slice(1).map((m: any, idx: number) => `![image ${idx}](${m.image_url.url})`)).join('\n')))
 
     const switchRole: MenuProps['onClick'] = ({ key }) => {
         setMessage(msg.id, 'role', key)
@@ -27,18 +32,33 @@ export default memo(function Card({ mid }: any) {
     }
 
     const editMessageHandler = () => {
-        if (msg.fold) {
+        if (msg.fold || getIsSending()) {
+            message.warning({
+                content: "请等待回答完成"
+            })
             return
         }
         setEdit(!edit)
     }
 
     const sendMessageHandler = () => {
+        if (getIsSending()) {
+            message.warning({
+                content: "请等待回答完成"
+            })
+            return
+        }
         sendMessageApi(msg, true)
         console.log("send", msg)
     }
 
     const delMessageHandler = () => {
+        if (getIsSending()) {
+            message.warning({
+                content: "请等待回答完成"
+            })
+            return
+        }
         removeMessage(currentChat, msg.id)
     }
 
@@ -78,7 +98,7 @@ export default memo(function Card({ mid }: any) {
     }
 
     const mainProps = {
-        message: msg.message,
+        message: renderMsg,
         render: msg.render,
         edit,
         quitEditHandler,
@@ -94,7 +114,7 @@ export default memo(function Card({ mid }: any) {
         loading: msg.loading,
         role: msg.role,
         fold: msg.fold,
-        message: msg.message,
+        message: renderMsg,
         model: msg.model,
         status: msg.status,
         modelHandler

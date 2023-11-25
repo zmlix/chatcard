@@ -48,7 +48,7 @@ export const useChatsStore = create<TChatsStore>()(
           state.currentChat = idx % state.chats.length
         }
         if (typeof idx === 'string') {
-          state.currentChat = (state.currentChat + parseInt(idx)) % state.chats.length
+          state.currentChat = (state.currentChat + parseInt(idx) + state.chats.length) % state.chats.length
         }
         if (typeof idx === 'undefined') {
           state.currentChat = state.chats.length - 1
@@ -137,6 +137,13 @@ export const useChatsStore = create<TChatsStore>()(
       set((state) => {
         if (chatId === undefined) {
           chatId = get().currentChat
+        }
+        if (state.chats[chatId].messages.length === 0) {
+          if (typeof msg.message === 'string') {
+            state.chats[chatId].config.title = msg.message.slice(0, 15)
+          } else if (typeof msg.message === 'object') {
+            state.chats[chatId].config.title = msg.message[0].text
+          }
         }
         if (pos) {
           state.chats[chatId].messages.splice(pos, 0, msg)

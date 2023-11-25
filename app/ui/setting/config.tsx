@@ -14,9 +14,12 @@ function SettingSystemConfig() {
 
     const setConfigHandler = (attr: string) => (value: any) => {
         if (typeof value === 'object') {
-            value = value.target.value
+            if (value) {
+                value = value.target.value
+            } else {
+                value = 0
+            }
         }
-        console.log(attr, value, typeof value)
         setConfig(attr, value)
     }
 
@@ -46,7 +49,7 @@ function SettingSystemConfig() {
             <div className="border w-full rounded-2xl">
                 <div className="flex items-center justify-between p-2 hover:cursor-default border-b h-12">
                     <div>
-                        <Tooltip title="选择不同聊天模型" placement="right" >
+                        <Tooltip title="选择不同聊天模型" placement="bottomRight" arrow={false}>
                             <span className="text-sm">模型(model)</span>
                         </Tooltip>
                     </div>
@@ -61,7 +64,7 @@ function SettingSystemConfig() {
                 </div>
                 <div className="flex items-center justify-between p-2 hover:cursor-default border-b h-12">
                     <div>
-                        <Tooltip title="较高的值将使输出更加随机" placement="right" >
+                        <Tooltip title="较高的值将使输出更加随机" placement="bottomRight" arrow={false}>
                             <span className="text-sm">温度(temperature)</span>
                         </Tooltip>
                     </div>
@@ -72,7 +75,7 @@ function SettingSystemConfig() {
                 </div>
                 <div className="flex items-center justify-between p-2 hover:cursor-default border-b h-12">
                     <div>
-                        <Tooltip title="建议更改此设置或温度(temperature)但不能同时更改两者" placement="right" >
+                        <Tooltip title="建议更改此设置或温度(temperature)但不能同时更改两者" placement="bottomRight" arrow={false}>
                             <span className="text-sm">核采样(top_p)</span>
                         </Tooltip>
                     </div>
@@ -83,7 +86,8 @@ function SettingSystemConfig() {
                 </div>
                 <div className="flex items-center justify-between p-2 hover:cursor-default border-b h-12">
                     <div>
-                        <Tooltip title="根据目前文本中的现有频率对新Token进行惩罚,从而降低模型逐字重复同一行的可能性" placement="right" >
+                        <Tooltip title="根据目前文本中的现有频率对新Token进行惩罚,从而降低模型逐字重复同一行的可能性"
+                            placement="bottomRight" arrow={false}>
                             <span className="text-sm">频率惩罚(frequency_penalty)</span>
                         </Tooltip>
                     </div>
@@ -95,7 +99,8 @@ function SettingSystemConfig() {
                 </div>
                 <div className="flex items-center justify-between p-2 hover:cursor-default border-b h-12">
                     <div>
-                        <Tooltip title="根据新Token目前是否出现在文本中来对其进行惩罚,从而增加模型谈论新主题的可能性" placement="right" >
+                        <Tooltip title="根据新Token目前是否出现在文本中来对其进行惩罚,从而增加模型谈论新主题的可能性"
+                            placement="bottomRight" arrow={false}>
                             <span className="text-sm">存在惩罚(presence_penalty)</span>
                         </Tooltip>
                     </div>
@@ -104,9 +109,20 @@ function SettingSystemConfig() {
                             tooltip={{ placement: "right" }} onChange={setConfigHandler('presence_penalty')} />
                     </div>
                 </div>
+                <div className="flex items-center justify-between p-2 hover:cursor-default border-b h-12">
+                    <div>
+                        <Tooltip title="每次聊天完成时生成的最大Token数,0值为无限制" placement="bottomRight" arrow={false}>
+                            <span className="text-sm">最大Token数(max_tokens)</span>
+                        </Tooltip>
+                    </div>
+                    <div>
+                        <InputNumber min={0} max={512000} defaultValue={config.max_tokens}
+                            value={config.max_tokens} onChange={setConfigHandler('max_tokens')} />
+                    </div>
+                </div>
                 {/* <div className="flex items-center justify-between p-2 hover:cursor-default border-b h-12">
                     <div>
-                        <Tooltip title="相同种子(seed)参数的重复请求尽量返回相同的结果(seed=0默认不启用此功能)" placement="right" >
+                        <Tooltip title="相同种子(seed)参数的重复请求尽量返回相同的结果(seed=0默认不启用此功能)" placement="bottomRight" arrow={false} >
                             <span className="text-sm">种子(seed)</span>
                         </Tooltip>
                     </div>
@@ -117,7 +133,7 @@ function SettingSystemConfig() {
                 </div> */}
                 <div className="flex items-center justify-between p-2 hover:cursor-default border-b h-12">
                     <div>
-                        <Tooltip title="默认每次对话自动打开跳过开关" placement="right" >
+                        <Tooltip title="默认每次对话自动打开跳过开关" placement="bottomRight" arrow={false}>
                             <span className="text-sm">默认跳过</span>
                         </Tooltip>
                     </div>
@@ -128,7 +144,7 @@ function SettingSystemConfig() {
                 </div>
                 <div className="flex items-center justify-between p-2 hover:cursor-default h-12">
                     <div>
-                        <Tooltip title="默认每次对话自动打开渲染开关" placement="right" >
+                        <Tooltip title="默认每次对话自动打开渲染开关" placement="bottomRight" arrow={false}>
                             <span className="text-sm">默认渲染</span>
                         </Tooltip>
                     </div>
@@ -149,10 +165,14 @@ function SettingChatConfig() {
     const modelOptions = useSystemStore((state: TSystemStore) => state.models)
 
     const setConfigHandler = (attr: string) => (value: any) => {
-        if (typeof value === 'object') {
-            value = value.target.value
-        }
         console.log(attr, value, typeof value)
+        if (typeof value === 'object') {
+            if (value) {
+                value = value.target.value
+            } else {
+                value = 0
+            }
+        }
         setConfig(attr, value)
     }
 
@@ -161,7 +181,7 @@ function SettingChatConfig() {
             <div className="border w-full rounded-2xl">
                 <div className="flex items-center justify-between p-2 hover:cursor-default border-b h-12">
                     <div>
-                        <Tooltip title="聊天标题" placement="right" >
+                        <Tooltip title="聊天标题" placement="bottomRight" arrow={false} >
                             <span className="text-sm">聊天标题</span>
                         </Tooltip>
                     </div>
@@ -172,7 +192,7 @@ function SettingChatConfig() {
                 </div>
                 <div className="flex items-center justify-between p-2 hover:cursor-default border-b h-12">
                     <div>
-                        <Tooltip title="选择不同聊天模型" placement="right" >
+                        <Tooltip title="选择不同聊天模型" placement="bottomRight" arrow={false} >
                             <span className="text-sm">模型(model)</span>
                         </Tooltip>
                     </div>
@@ -187,7 +207,7 @@ function SettingChatConfig() {
                 </div>
                 <div className="flex items-center justify-between p-2 hover:cursor-default border-b h-12">
                     <div>
-                        <Tooltip title="较高的值将使输出更加随机" placement="right" >
+                        <Tooltip title="较高的值将使输出更加随机" placement="bottomRight" arrow={false} >
                             <span className="text-sm">温度(temperature)</span>
                         </Tooltip>
                     </div>
@@ -198,7 +218,7 @@ function SettingChatConfig() {
                 </div>
                 <div className="flex items-center justify-between p-2 hover:cursor-default border-b h-12">
                     <div>
-                        <Tooltip title="建议更改此设置或温度(temperature)但不能同时更改两者" placement="right" >
+                        <Tooltip title="建议更改此设置或温度(temperature)但不能同时更改两者" placement="bottomRight" arrow={false} >
                             <span className="text-sm">核采样(top_p)</span>
                         </Tooltip>
                     </div>
@@ -209,7 +229,8 @@ function SettingChatConfig() {
                 </div>
                 <div className="flex items-center justify-between p-2 hover:cursor-default border-b h-12">
                     <div>
-                        <Tooltip title="根据目前文本中的现有频率对新Token进行惩罚,从而降低模型逐字重复同一行的可能性" placement="right" >
+                        <Tooltip title="根据目前文本中的现有频率对新Token进行惩罚,从而降低模型逐字重复同一行的可能性"
+                            placement="bottomRight" arrow={false} >
                             <span className="text-sm">频率惩罚(frequency_penalty)</span>
                         </Tooltip>
                     </div>
@@ -221,7 +242,8 @@ function SettingChatConfig() {
                 </div>
                 <div className="flex items-center justify-between p-2 hover:cursor-default border-b h-12">
                     <div>
-                        <Tooltip title="根据新Token目前是否出现在文本中来对其进行惩罚,从而增加模型谈论新主题的可能性" placement="right" >
+                        <Tooltip title="根据新Token目前是否出现在文本中来对其进行惩罚,从而增加模型谈论新主题的可能性"
+                            placement="bottomRight" arrow={false} >
                             <span className="text-sm">存在惩罚(presence_penalty)</span>
                         </Tooltip>
                     </div>
@@ -232,7 +254,18 @@ function SettingChatConfig() {
                 </div>
                 <div className="flex items-center justify-between p-2 hover:cursor-default border-b h-12">
                     <div>
-                        <Tooltip title="默认每次对话自动打开跳过开关" placement="right" >
+                        <Tooltip title="每次聊天完成时生成的最大Token数,0值为无限制" placement="bottomRight" arrow={false}>
+                            <span className="text-sm">最大Token数(max_tokens)</span>
+                        </Tooltip>
+                    </div>
+                    <div>
+                        <InputNumber min={0} max={512000} defaultValue={config.max_tokens}
+                            value={config.max_tokens} onChange={setConfigHandler('max_tokens')} />
+                    </div>
+                </div>
+                <div className="flex items-center justify-between p-2 hover:cursor-default border-b h-12">
+                    <div>
+                        <Tooltip title="默认每次对话自动打开跳过开关" placement="bottomRight" arrow={false} >
                             <span className="text-sm">默认跳过</span>
                         </Tooltip>
                     </div>
@@ -243,7 +276,7 @@ function SettingChatConfig() {
                 </div>
                 <div className="flex items-center justify-between p-2 hover:cursor-default h-12">
                     <div>
-                        <Tooltip title="默认每次对话自动打开渲染开关" placement="right" >
+                        <Tooltip title="默认每次对话自动打开渲染开关" placement="bottomRight" arrow={false} >
                             <span className="text-sm">默认渲染</span>
                         </Tooltip>
                     </div>
@@ -261,17 +294,17 @@ export default function SettingConfig() {
     console.log("SettingConfig")
 
     type Tab = 'system' | 'chat'
-    const [tab, setTab] = useState<Tab>('system')
+    const [tab, setTab] = useState<Tab>('chat')
 
     return (
         <div className="flex flex-col h-full m-1 gap-2 overflow-auto">
             <Button.Group className="w-full">
-                <Button icon={<ToolOutlined />} block shape="round"
-                    type={tab === 'system' ? 'primary' : undefined}
-                    onClick={() => setTab('system')}>系统设置</Button>
                 <Button icon={<MessageOutlined />} block shape="round"
                     type={tab === 'chat' ? 'primary' : undefined}
                     onClick={() => setTab('chat')}>聊天设置</Button>
+                <Button icon={<ToolOutlined />} block shape="round"
+                    type={tab === 'system' ? 'primary' : undefined}
+                    onClick={() => setTab('system')}>系统设置</Button>
             </Button.Group>
             <div className="flex flex-col h-full m-1 gap-2 font-serif overflow-auto no-scrollbar">
                 {{

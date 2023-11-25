@@ -21,6 +21,7 @@ type TChatConfig = {
     top_p: number
     frequency_penalty: number
     presence_penalty: number
+    max_tokens: number
     autoSkip: boolean
     autoRender: boolean
 }
@@ -70,6 +71,7 @@ type TSystemConfig = {
     top_p: number
     frequency_penalty: number
     presence_penalty: number
+    max_tokens: number
     autoSkip: boolean
     autoRender: boolean
     seed?: number
@@ -93,6 +95,7 @@ type TSystemStoreState = {
 
 type TSystemStoreAction = {
     setConfig: (attr: string, value: any) => void
+    getIsSending: () => boolean
     setIsSending: (s: boolean) => void
     setSendingMsgId: (msgId: number) => void
     setIsShowSetting: (s: boolean) => void
@@ -108,37 +111,6 @@ type TSystemStoreAction = {
 
 type TSystemStore = TSystemStoreState & TSystemStoreAction
 
-
-type TChatStoreState = {
-    id: number
-    messages: Array<TMessage>
-    config: TChatConfig
-}
-
-type TChatStoreAction = {
-    changeMessages: (messages: Array<TMessage>) => void
-    getMessage: (idx: number) => void
-    getMessages: () => void
-    addMessage: (msg: TMessage, pos: number | undefined) => void
-    removeMessage: (msgId: number) => void
-    setConfig: (attr: string, value: any) => void
-    get: () => TChatStore
-}
-
-type TChatStore = TChatStoreState & TChatStoreAction
-
-type TMessageStoreState = {
-    message: TMessage
-}
-
-type TMessageStoreAction = {
-    setMessage: (msgId: number, attr: string, value: any) => void
-    newMessage: () => void
-    getMessage: () => TMessage
-}
-
-type TMessageStore = TMessageStoreState & TMessageStoreState
-
 export {
     TMessage,
     TChatConfig,
@@ -150,11 +122,5 @@ export {
     TPrompts,
     TSystemStoreState,
     TSystemStoreAction,
-    TSystemStore,
-    TChatStoreState,
-    TChatStoreAction,
-    TChatStore,
-    TMessageStoreState,
-    TMessageStoreAction,
-    TMessageStore
+    TSystemStore
 }

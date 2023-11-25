@@ -30,7 +30,7 @@ export default memo(function CardMain({ message, render, edit, quitEditHandler, 
                     <Button type="primary" icon={<CheckCircleOutlined />} onClick={submitEditHandler(text)}>修改</Button>
                 </div>
             </div> :
-                <div className=' hover:cursor-text'>
+                <div className=' hover:cursor-text overflow-auto'>
                     {render ? <Markdown message={message}></Markdown> :
                         <pre className=' whitespace-pre-line'>{message}</pre>}
                 </div>

@@ -6,7 +6,7 @@ import { useChatsStore } from "../store/chats";
 import { useSystemStore } from "../store/system";
 import axios from "axios";
 
-export function sendMessageApi(message: TMessage, resend?: boolean) {
+export function sendMessageApi(message: TMessage, resend?: boolean, fileList?: any[]) {
     const chatConfig: TChatConfig = useChatsStore.getState().getConfig()
     const systemConfig: TSystemConfig = useSystemStore.getState().config
     const setIsSending = useSystemStore.getState().setIsSending
@@ -37,11 +37,26 @@ export function sendMessageApi(message: TMessage, resend?: boolean) {
     }
     let messages: Array<TMessage> = []
 
+    if (fileList) {
+        const imgs = fileList.map((f) => ({
+            type: "image_url",
+            image_url: {
+                "url": f.data,
+                "detail": "auto"
+            }
+        }))
+
+        message.message = [{
+            "type": "text",
+            "text": message.message
+        }, ...imgs]
+    }
+
     if (resend === undefined || resend === false) {
+        useSystemStore.getState().setNeedScroll(true)
         useChatsStore.getState().addMessage(message)
         messages = useChatsStore.getState().getCurrentChat().messages
         useChatsStore.getState().addMessage(msg)
-
     } else {
         const index = useChatsStore.getState().getCurrentChat().messages.findIndex((msg) => msg.id === message.id)
         messages = useChatsStore.getState().getCurrentChat().messages.slice(0, index + 1)
@@ -59,7 +74,7 @@ export function sendMessageApi(message: TMessage, resend?: boolean) {
                 'Authorization': `Bearer ${systemConfig.api_key}`,
             },
             payload: JSON.stringify({
-                "model": resend ? message.model : chatConfig.model,
+                "model": message.model,
                 "messages": messages.filter((msg) => !msg.skip).map((msg) => ({
                     "role": msg.role,
                     "content": msg.message
@@ -68,16 +83,18 @@ export function sendMessageApi(message: TMessage, resend?: boolean) {
                 "top_p": chatConfig.top_p,
                 "temperature": chatConfig.temperature,
                 "presence_penalty": chatConfig.presence_penalty,
-                "frequency_penalty": chatConfig.frequency_penalty
+                "frequency_penalty": chatConfig.frequency_penalty,
+                "max_tokens": chatConfig.max_tokens || undefined
             }),
             method: "POST",
         })
     sse.addEventListener('message', function (e: any) {
+        console.log(e)
         if (e.data == '[DONE]' || !useSystemStore.getState().isSending) {
+            useChatsStore.getState().setMessage(msgId, 'loading', false)
             if (resend === undefined || resend === false) {
                 useSystemStore.getState().setNeedScroll(true)
             }
-            useChatsStore.getState().setMessage(msgId, 'loading', false)
             sse.close()
             return
         }
@@ -99,17 +116,11 @@ export function sendMessageApi(message: TMessage, resend?: boolean) {
                 return
             }
         }
-        if (payload.choices[0].finish_reason === "stop") {
-            useChatsStore.getState().setMessage(msgId, 'loading', false)
-            if (resend === undefined || resend === false) {
-                useSystemStore.getState().setNeedScroll(true)
-            }
-            sse.close()
-            return
+        if (payload.choices[0].delta.content) {
+            msgContent += payload.choices[0].delta.content
+            useChatsStore.getState().setMessage(msgId, 'model', payload.model)
+            useChatsStore.getState().setMessage(msgId, 'message', msgContent)
         }
-        msgContent += payload.choices[0].delta.content
-        useChatsStore.getState().setMessage(msgId, 'model', payload.model)
-        useChatsStore.getState().setMessage(msgId, 'message', msgContent)
     })
     sse.addEventListener('readystatechange', (e: any) => {
         console.log(e)
