@@ -13,11 +13,14 @@ function SettingSystemConfig() {
     const modelOptions = useSystemStore((state: TSystemStore) => state.models)
 
     const setConfigHandler = (attr: string) => (value: any) => {
+        console.log(attr, value, typeof value)
         if (typeof value === 'object') {
             if (value) {
                 value = value.target.value
-            } else {
-                value = 0
+            }
+
+            if (attr === 'api_url' && value === '') {
+                value = 'https://api.openai.com/v1/chat/completions'
             }
         }
         setConfig(attr, value)
@@ -34,12 +37,14 @@ function SettingSystemConfig() {
             <div className="border w-full rounded-2xl">
                 <div className="flex flex-col gap-1 p-2">
                     <span>API URL</span>
-                    <div><Input placeholder="默认使用OPENAI地址" defaultValue={config.api_url} allowClear
+                    <div><Input placeholder="默认使用OPENAI地址"
+                        defaultValue={config.api_url} allowClear
                         onChange={setConfigHandler('api_url')} /></div>
                 </div>
                 <div className="flex flex-col gap-1 p-2">
                     <span>API KEY</span>
-                    <div><Input.Password placeholder="填入API KEY后才可使用" defaultValue={config.api_key} allowClear
+                    <div><Input.Password placeholder="填入API KEY后才可使用"
+                        defaultValue={config.api_key} allowClear
                         onChange={setConfigHandler('api_key')} /></div>
                 </div>
                 <div className="flex flex-col gap-1 p-2">

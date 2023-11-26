@@ -1,11 +1,12 @@
 import { DndContext } from '@dnd-kit/core';
 import { SortableContext, arrayMove } from '@dnd-kit/sortable';
 import { TChat, TChatsStore, TSystemStore } from "@/app";
-import { PlusOutlined } from "@ant-design/icons"
-import { Button } from "antd"
+import { PlusOutlined, RedoOutlined } from "@ant-design/icons"
+import { Button, Statistic } from "antd"
 import SettingChatCard from "./card"
 import { useChatsStore } from "@/app/store/chats"
 import { useShallow } from 'zustand/react/shallow';
+import { useSystemStore } from '@/app/store/system';
 
 export default function SettingMain() {
     console.log("SettingMain")
@@ -15,6 +16,8 @@ export default function SettingMain() {
     const newChat = useChatsStore((state: TChatsStore) => state.newChat)
     const moveChats = useChatsStore((state: TChatsStore) => state.moveChats)
     const setCurrentChat = useChatsStore((state: TChatsStore) => state.setCurrentChat)
+
+    const api_url = useSystemStore((state: TSystemStore) => state.config.api_url)
 
     function handleDragEnd(event: any) {
         const { active, over } = event
@@ -35,6 +38,14 @@ export default function SettingMain() {
 
     return (
         <div className="flex flex-col h-full m-1 overflow-auto no-scrollbar">
+            {/* {api_url.indexOf('api.openai.com') === -1 &&
+                <div className='flex justify-between items-center font-mono text-sm text-zinc-500 border-b mb-1 pl-2 pr-2'>
+                    <div className='flex gap-2 items-center'>
+                        <span>剩余Token数量</span>
+                        <span className='font-sans text-stone-900 text-base pb-0.5'>0</span>
+                    </div>
+                    <Button className='hover:animate-spin' size='small' type="link" icon={<RedoOutlined />} />
+                </div>} */}
             <Button block onClick={newChat} icon={<PlusOutlined />}>新的聊天</Button>
             <DndContext onDragEnd={handleDragEnd}>
                 <SortableContext items={chatsId}>

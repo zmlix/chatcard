@@ -51,6 +51,7 @@ export default function SettingFooter({ view, setView }: any) {
                 <Button.Group className="w-full">
                     {views.map((v, idx) => (
                         <Button key={idx} icon={v.icon} block onClick={switchViewHandler(v.view)}
+                            disabled={v.view === 'plugin'}
                             type={v.view === view ? 'primary' : undefined}>{v.name}</Button>))}
                 </Button.Group>
             </div>
