@@ -1,5 +1,5 @@
 import Card from "./card/card"
-import { useEffect, useRef, memo, useState } from "react";
+import { useEffect, useRef, memo } from "react";
 import { TChatsStore, TMessage, TSystemStore } from "@/app";
 import { RobotOutlined } from "@ant-design/icons";
 import { Button } from "antd";
@@ -8,11 +8,12 @@ import { useChatsStore } from "@/app/store/chats"
 import { useSystemStore } from "@/app/store/system"
 import { useShallow } from "zustand/react/shallow";
 import { sendMessageApi } from "@/app/api/api";
+import { Virtuoso, VirtuosoHandle } from 'react-virtuoso'
 
 export default memo(function CardBox() {
     console.log("cardBox")
 
-    const boxRef = useRef(null)
+    const boxRef = useRef<VirtuosoHandle>(null)
 
     const isSending = useSystemStore((state: TSystemStore) => state.isSending)
     const needScroll = useSystemStore((state: TSystemStore) => state.needScroll)
@@ -31,11 +32,19 @@ export default memo(function CardBox() {
     useEffect(() => {
         console.log("set scrollTop")
         if (needScroll) {
-            // @ts-ignore
-            boxRef.current.scrollTop = boxRef.current.scrollHeight
-            setNeedScroll(false)
+            setTimeout(() => {
+                if (boxRef.current) {
+                    console.log("message length", messages.length)
+                    boxRef.current.scrollToIndex({
+                        index: messages.length - 1,
+                        align: 'end',
+                        behavior: 'auto'
+                    })
+                }
+                setNeedScroll(false)
+            }, 300)
         }
-    }, [needScroll, setNeedScroll])
+    }, [needScroll, setNeedScroll, messages])
 
     const tryHandler = (problem: string) => () => {
         console.log(problem)
@@ -62,7 +71,7 @@ export default memo(function CardBox() {
 
     return (
         <div className="grid overflow-auto no-scrollbar" style={{ height: "inherit" }}>
-            <div ref={boxRef} className="flex flex-col gap-1 h-full p-3 overflow-auto no-scrollbar items-center">
+            <div className="flex flex-col gap-1 h-full p-3 overflow-auto no-scrollbar items-center">
                 {messages.length === 0 ?
                     <div className="flex flex-wrap justify-center h-full w-full gap-2 ">
                         <RobotOutlined className="text-8xl" />
@@ -81,9 +90,14 @@ export default memo(function CardBox() {
                         </div>
                     </div>
                     :
-                    messages.map((id) =>
-                        <Card key={id} mid={id}></Card>
-                    )
+                    <div className="h-full w-full">
+                        <Virtuoso
+                            ref={boxRef}
+                            data={messages}
+                            className="no-scrollbar"
+                            totalCount={messages.length}
+                            itemContent={(index, id) => <Card key={id} mid={id}></Card>} />
+                    </div>
                 }
 
                 {isSending && <div className='fixed bottom-20 rounded-md'>

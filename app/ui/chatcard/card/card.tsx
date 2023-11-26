@@ -121,7 +121,7 @@ export default memo(function Card({ mid }: any) {
     }
 
     return (
-        <div className='border rounded w-full' >
+        <div className='border rounded w-full mb-0.5'>
             <CardTools {...toolsProps}></CardTools>
             {!msg.fold && <CardMain {...mainProps}></CardMain>}
             {!edit && <CardFooter {...footerProps}></CardFooter>}
