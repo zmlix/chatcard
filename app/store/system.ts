@@ -66,10 +66,12 @@ export const useSystemStore = create<TSystemStoreState & TSystemStoreAction>()(
             }),
         initPrompts: () =>
             set((state) => {
+                if (state.prompts.prompt.length === 0) {
+                    state.prompts.prompt = prompt_zh()
+                }
                 state.prompts = {
                     prompt: [
                         ...state.prompts.prompt,
-                        ...(prompt_zh())
                     ],
                     role: []
                 }

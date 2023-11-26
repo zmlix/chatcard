@@ -14,7 +14,7 @@ export function sendMessageApi(message: TMessage, resend?: boolean, fileList?: a
 
     try {
         message.model = message.model === '' ? chatConfig.model : message.model
-        message.skip = chatConfig.autoSkip
+        // message.skip = chatConfig.autoSkip
         message.render = chatConfig.autoRender
     } catch {
     }
@@ -132,6 +132,7 @@ export function sendMessageApi(message: TMessage, resend?: boolean, fileList?: a
             if (resend === undefined || resend === false) {
                 useSystemStore.getState().setNeedScroll(true)
             }
+            useChatsStore.getState().setMessage(message.id, 'skip', chatConfig.autoSkip)
             useChatsStore.getState().setMessage(msgId, 'status', 'success')
             setIsSending(false)
             setSendingMsgId(0)

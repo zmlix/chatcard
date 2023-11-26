@@ -37,7 +37,7 @@ export default function SettingChatCard({ cid, index }: any) {
         if (title.length === 0) {
             return
         }
-        setConfig('title', title)
+        setConfig('title', title, index)
         setEdit(!edit)
     }
 
