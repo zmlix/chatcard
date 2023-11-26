@@ -57,7 +57,7 @@ export default function SettingFooter({ view, setView }: any) {
             </div>
             {(isShowSetting && !isShowCard) && <Button type="primary" danger onClick={OpenSettingHandler}>关闭</Button>}
             <div className="flex justify-center items-center border border-dashed rounded text-sm">
-                Star on<Button type="link" size="small">GitHub</Button>@zmlix
+                Star on<Button type="link" size="small" href="https://github.com/zmlix/chatcard.git">GitHub</Button>@zmlix
             </div>
         </div>
     )
