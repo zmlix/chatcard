@@ -1,23 +1,30 @@
 import { useState } from "react"
-import { Button, Input, Space, Popconfirm } from "antd"
+import { Button, Input, Space, Popconfirm, message } from "antd"
 import { DeleteFilled, FormOutlined, CheckOutlined, QuestionCircleOutlined, PlusOutlined } from "@ant-design/icons"
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useChatsStore } from "@/app/store/chats"
-import { TChatsStore } from "@/app";
+import { TChatsStore, TSystemStore } from "@/app";
+import { useSystemStore } from "@/app/store/system";
 
 export default function SettingChatCard({ cid, index }: any) {
     console.log("SettingChatCard")
 
+    const isSending = useSystemStore((state: TSystemStore) => state.isSending)
     const currentChat = useChatsStore((state: TChatsStore) => state.currentChat)
+    const chatTitle = useChatsStore((state: TChatsStore) => state.chats[index].config.title)
+    const messageNumber = useChatsStore((state: TChatsStore) => state.chats[index].messages.length)
     const setCurrentChat = useChatsStore((state: TChatsStore) => state.setCurrentChat)
     const removeChat = useChatsStore((state: TChatsStore) => state.removeChat)
     const setConfig = useChatsStore((state: TChatsStore) => state.setConfig)
 
-    const chatTitle = useChatsStore((state: TChatsStore) => state.chats[index].config.title)
-    const messageNumber = useChatsStore((state: TChatsStore) => state.chats[index].messages.length)
-
     const openChatHandler = () => {
+        if (isSending) {
+            message.warning({
+                content: "请等待回答完成"
+            })
+            return
+        }
         setCurrentChat(index)
     }
 

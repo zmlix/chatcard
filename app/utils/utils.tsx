@@ -1,15 +1,15 @@
 export function formatDate(date: Date): string {
     console.log(date, typeof date)
-    if (typeof date === 'string'){
+    if (typeof date === 'string') {
         date = new Date(date)
     }
-    return `${date.getFullYear()}/${date.getMonth()}/${date.getDay()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+    return `${date.toISOString().split('T')[0].replaceAll('-', '/')} ${date.toISOString().split('T')[1].split('.')[0]}`
 }
 
-export function objectInfo(obj:{[key: string | number]: any;}){
+export function objectInfo(obj: { [key: string | number]: any; }) {
     return (
         <ul>
-            {Object.keys(obj).map((o:string | number, idx) => (<li key={idx}>{o}:{obj[o]}</li>))}
+            {Object.keys(obj).map((o: string | number, idx) => (<li key={idx}>{o}:{obj[o]}</li>))}
         </ul>
     )
 }
@@ -17,4 +17,4 @@ export function objectInfo(obj:{[key: string | number]: any;}){
 export const random32BitNumber = () => {
     const maxInt32 = 0xffffffff
     return Math.floor(Math.random() * maxInt32)
-  }
+}

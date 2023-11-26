@@ -14,7 +14,6 @@ export function sendMessageApi(message: TMessage, resend?: boolean, fileList?: a
 
     try {
         message.model = message.model === '' ? chatConfig.model : message.model
-        // message.skip = chatConfig.autoSkip
         message.render = chatConfig.autoRender
     } catch {
     }

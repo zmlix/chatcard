@@ -266,7 +266,7 @@ export default memo(function InputBox() {
                     </div>
                 )}
             />}
-            <div className={upload ? 'absolute right-8 bottom-16 w-64 min-h-36 bg-white mb-2 border rounded-2xl p-2' : 'hidden'}>
+            <div className={upload ? 'absolute right-8 bottom-16 w-64 min-h-36 bg-white mb-2 border rounded-2xl p-2 z-50' : 'hidden'}>
                 <Upload
                     customRequest={uploadAction}
                     accept='image/*'

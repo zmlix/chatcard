@@ -100,7 +100,7 @@ export default memo(function CardBox() {
                     </div>
                 }
 
-                {isSending && <div className='fixed bottom-20 rounded-md'>
+                {isSending && <div className='rounded-md z-50'>
                     <Button type="primary" onClick={cancelHandler}>
                         <div className="flex items-center gap-1">
                             <span className="w-3 h-3 border-2"></span> 停止请求

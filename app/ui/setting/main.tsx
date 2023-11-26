@@ -1,8 +1,8 @@
 import { DndContext } from '@dnd-kit/core';
 import { SortableContext, arrayMove } from '@dnd-kit/sortable';
-import { TChat, TChatsStore, TSystemStore } from "@/app";
+import { TChatsStore, TSystemStore } from "@/app";
 import { PlusOutlined, RedoOutlined } from "@ant-design/icons"
-import { Button, Statistic } from "antd"
+import { Button } from "antd"
 import SettingChatCard from "./card"
 import { useChatsStore } from "@/app/store/chats"
 import { useShallow } from 'zustand/react/shallow';
