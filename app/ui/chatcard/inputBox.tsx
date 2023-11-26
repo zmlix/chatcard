@@ -1,5 +1,5 @@
 'use client'
-import { Button, Select, Dropdown, message, Input, Upload, UploadFile, Avatar } from 'antd';
+import { Button, Select, Dropdown, message, Input, Upload, UploadFile, Badge } from 'antd';
 import { HomeOutlined, SendOutlined, SmileOutlined, UploadOutlined } from '@ant-design/icons';
 import { ChangeEvent, memo, useEffect, useRef, useState } from 'react';
 import { TChatsStore, TMessage, TSystemStore } from '@/app';
@@ -299,8 +299,10 @@ export default memo(function InputBox() {
                         <Button.Group>
                             <Button style={{ width: 30 }} shape="circle"
                                 icon={<SmileOutlined />} block onClick={() => setEmoji(!emoji)} />
-                            <Button style={{ width: 30 }} shape="circle"
-                                icon={<UploadOutlined />} block onClick={() => setUpload(!upload)} />
+                            <Badge count={fileList.length} size="small" offset={[-3, 3]} styles={{ indicator: { zIndex: 9999 } }}>
+                                <Button style={{ width: 30 }} shape="circle"
+                                    icon={<UploadOutlined />} block onClick={() => setUpload(!upload)} />
+                            </Badge>
                         </Button.Group>
                     </div>
                     <Dropdown.Button type="primary" icon={<SendOutlined />} onClick={submitHandler()} menu={{ items: modelOptions, onClick: submitWithModelHandler }}>发送</Dropdown.Button>
