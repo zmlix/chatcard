@@ -1,9 +1,10 @@
+import dynamic from 'next/dynamic'
 import { useState } from "react"
 import SettingFooter from "./footer"
-import SettingMain from "./main"
 import SettingConfig from "./config"
 import SettingPrompt from "./prompt"
 import SettingPlugin from "./plugin"
+const SettingMain = dynamic(() => import('./main'), { ssr: false })
 
 export type TSettingView = 'main' | 'config' | 'prompt' | 'plugin'
 
@@ -19,7 +20,7 @@ export default function Setting() {
     return (
         <>
             {{
-                "main": <SettingMain></SettingMain>,
+                "main": <div className='h-full'><SettingMain></SettingMain></div>,
                 "config": <SettingConfig></SettingConfig>,
                 "prompt": <SettingPrompt></SettingPrompt>,
                 "plugin": <SettingPlugin></SettingPlugin>

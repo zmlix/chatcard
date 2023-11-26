@@ -3,7 +3,8 @@ import { immer } from 'zustand/middleware/immer'
 import { random32BitNumber } from '../utils/utils'
 import { arrayMove } from '@dnd-kit/sortable';
 import { TChat, TChatConfig, TMessage, TChatsStore } from '..'
-import { useSystemStore } from './system';
+import { useSystemStore } from './system'
+import { persist, createJSONStorage } from 'zustand/middleware'
 
 const config: TChatConfig = {
   title: '新的聊天',
@@ -33,7 +34,7 @@ const chat: TChat = {
 }
 
 export const useChatsStore = create<TChatsStore>()(
-  immer((set, get) => ({
+  persist(immer((set, get) => ({
     chats: Array<TChat>(chat),
     currentChat: 0,
     getCurrentChat: () => {
@@ -191,5 +192,8 @@ export const useChatsStore = create<TChatsStore>()(
         }
         state.chats[chatId].config[attr] = value
       }),
-  }))
+  })), {
+    name: 'chatcard-chats',
+    storage: createJSONStorage(() => localStorage),
+  })
 )

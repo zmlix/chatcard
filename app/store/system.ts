@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import prompt_zh from "@/app/data/prompts_zh"
 import { TSystemConfig, TSystemStoreAction, TSystemStoreState } from '..'
+import { persist, createJSONStorage } from 'zustand/middleware'
 
 const config: TSystemConfig = {
     api_url: 'https://api.openai.com/v1/chat/completions',
@@ -18,7 +19,7 @@ const config: TSystemConfig = {
 }
 
 export const useSystemStore = create<TSystemStoreState & TSystemStoreAction>()(
-    immer((set, get) => ({
+    persist(immer((set, get) => ({
         config: config,
         isSending: false,
         sendingMsgId: 0,
@@ -66,7 +67,10 @@ export const useSystemStore = create<TSystemStoreState & TSystemStoreAction>()(
         initPrompts: () =>
             set((state) => {
                 state.prompts = {
-                    prompt: prompt_zh(),
+                    prompt: [
+                        ...state.prompts.prompt,
+                        ...(prompt_zh())
+                    ],
                     role: []
                 }
             }),
@@ -105,5 +109,8 @@ export const useSystemStore = create<TSystemStoreState & TSystemStoreAction>()(
             set((state) => {
                 state.needScroll = scroll
             })
-    }))
+    })), {
+        name: 'chatcard-system',
+        storage: createJSONStorage(() => localStorage),
+    })
 )

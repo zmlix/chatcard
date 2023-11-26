@@ -1,13 +1,14 @@
+import dynamic from 'next/dynamic'
 import ChatHeader from "./header"
 import InputBox from "./inputBox"
-import CardBox from "./cardBox"
+const CardBox = dynamic(() => import('./cardBox'), { ssr: false })
 
 export default function ChatCard() {
   console.log("chatCard")
   return (
     <>
       <ChatHeader />
-      <CardBox></CardBox>
+      <div className='h-full'><CardBox></CardBox></div>
       <InputBox></InputBox>
     </>
   )

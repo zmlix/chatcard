@@ -1,6 +1,6 @@
 import { Button, Collapse, Input, message, Empty } from "antd";
 import {
-    PushpinOutlined, SmileOutlined, TagOutlined,
+    PushpinOutlined, SmileOutlined,
     CopyOutlined, SearchOutlined, PlusOutlined,
     EditOutlined, DeleteOutlined
 } from "@ant-design/icons";
@@ -22,7 +22,7 @@ function Prompt({ prompts, addPrompt, editPrompt, removePrompt }: any) {
         console.log("change prompts")
         setFilterPrompts(prompts.filter((p: any) =>
             (p.act.indexOf(search) !== -1 || p.prompt.indexOf(search) !== -1)))
-    }, [prompts])
+    }, [prompts, search])
 
     const addPromptHandler = () => {
         if (title === "" && context === "" && open) {

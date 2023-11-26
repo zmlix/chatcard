@@ -1,4 +1,8 @@
 export function formatDate(date: Date): string {
+    console.log(date, typeof date)
+    if (typeof date === 'string'){
+        date = new Date(date)
+    }
     return `${date.getFullYear()}/${date.getMonth()}/${date.getDay()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
 }
 
