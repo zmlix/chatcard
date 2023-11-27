@@ -21,16 +21,18 @@ export default function App() {
     }
   }, [initPrompts, setIsShowSetting])
 
-  const settingClass = "flex flex-col gap-1 bg-white border rounded-2xl p-2 "
-  const chatCardClass = "flex flex-col bg-white border rounded-2xl p-2"
+  const settingClass = "flex flex-col gap-1 bg-white border rounded-2xl p-2 max-w-lg w-96"
+  const chatCardClass = "flex flex-col bg-white border rounded-2xl p-2 w-full"
 
   return (
-    <div className="flex gap-2 w-full">
-      <div id='chatsetting' className={isShowSetting ? settingClass : 'hidden'} suppressHydrationWarning>
-        <Setting></Setting>
-      </div>
-      <div id='chatcard' className={isShowCard ? chatCardClass : 'hidden'}>
-        <ChatCard></ChatCard>
+    <div className="m-0 p-5 w-full h-full bg-zinc-50">
+      <div className="flex gap-2 w-full h-full">
+        <div className={isShowSetting ? settingClass : 'hidden'} suppressHydrationWarning>
+          <Setting></Setting>
+        </div>
+        <div className={isShowCard ? chatCardClass : 'hidden'}>
+          <ChatCard></ChatCard>
+        </div>
       </div>
     </div>
   )

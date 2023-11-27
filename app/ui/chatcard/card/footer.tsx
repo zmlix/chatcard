@@ -20,10 +20,12 @@ export default memo(function CardFooter({ loading, role, fold, message, model, s
                         bordered={false}
                         defaultValue={model}
                         size="small"
-                        style={{ width: 200, textAlign: 'right' }}
+                        className='font-serif text-sm w-52 text-right'
                         onChange={modelHandler}
                         options={modelOptions}
-                    /> : <span className='mr-3 font-serif block'>{status === 'success' ? model : status}</span>}
+                    /> : <span className='mr-3 font-serif block text-sm' style={{ color: '#000000E0' }}>
+                        {status === 'success' ? model : status}
+                    </span>}
                 </div>
             </div>}
         </>

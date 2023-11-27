@@ -64,10 +64,10 @@ export default function SettingChatCard({ cid, index }: any) {
         zIndex: isDragging ? 9999 : undefined
     };
 
-    const className = "flex items-center h-16 justify-between border hover:cursor-pointer group "
+    const cardClass = "flex items-center h-16 justify-between border hover:cursor-pointer group "
     return (
         <>
-            <div ref={preview} style={style} {...attributes} className={currentChat === index ? className + "bg-zinc-200" : className + "bg-white"}>
+            <div ref={preview} style={style} {...attributes} className={currentChat === index ? cardClass + "bg-zinc-200" : cardClass + "bg-white"}>
                 <div className="m-2 w-full">
                     {edit ? <div>
                         <Space.Compact style={{ width: '100%' }}>

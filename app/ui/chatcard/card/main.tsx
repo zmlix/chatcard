@@ -2,9 +2,6 @@ import { useEffect, useState, memo } from 'react';
 import { Input, Button } from 'antd'
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import Markdown from './markdown';
-import { useChatsStore } from "@/app/store/chats"
-import { TChatsStore } from '@/app';
-
 
 export default memo(function CardMain({ message, render, edit, quitEditHandler, submitEditHandler }: any) {
 
