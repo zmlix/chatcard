@@ -79,6 +79,7 @@ type TSystemConfig = {
 
 type TPrompts = {
     prompt: Array<any>
+    systemPrompt: Array<any>
     role: Array<any>
 }
 

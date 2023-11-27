@@ -195,7 +195,7 @@ export default function SettingPrompt() {
     }
 
     const promptProps = {
-        prompts: prompts.prompt,
+        prompts: [...prompts.prompt, ...prompts.systemPrompt],
         addPrompt,
         editPrompt,
         removePrompt

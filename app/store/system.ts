@@ -28,6 +28,7 @@ export const useSystemStore = create<TSystemStoreState & TSystemStoreAction>()(
         needScroll: false,
         prompts: {
             prompt: [],
+            systemPrompt: [],
             role: []
         },
         models: [
@@ -66,15 +67,7 @@ export const useSystemStore = create<TSystemStoreState & TSystemStoreAction>()(
             }),
         initPrompts: () =>
             set((state) => {
-                if (state.prompts.prompt.length === 0) {
-                    state.prompts.prompt = prompt_zh()
-                }
-                state.prompts = {
-                    prompt: [
-                        ...state.prompts.prompt,
-                    ],
-                    role: []
-                }
+                state.prompts.systemPrompt = prompt_zh()
             }),
         addPrompt: (prompt: any) => {
             const index = get().prompts?.prompt.findIndex((p) => p.act === prompt.act)

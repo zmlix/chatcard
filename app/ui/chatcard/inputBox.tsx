@@ -12,7 +12,6 @@ import { BaseSelectRef } from 'rc-select/lib/BaseSelect'
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
 import { UploadChangeParam } from 'antd/es/upload';
-import { UploadListType } from 'antd/es/upload/interface';
 
 const cmdList = [
     {
@@ -46,7 +45,7 @@ export default memo(function InputBox() {
     const isShowSetting = useSystemStore((state: TSystemStore) => state.isShowSetting)
     const modelOptions = useSystemStore((state: TSystemStore) => state.models)
     const defalutModel = useChatsStore((state: TChatsStore) => state.getConfig().model)
-    const promptList = useSystemStore((state: TSystemStore) => state.prompts.prompt)
+    const prompts = useSystemStore((state: TSystemStore) => state.prompts)
     const sendingMsgId = useSystemStore((state: TSystemStore) => state.sendingMsgId)
     const setIsShowCard = useSystemStore((state: TSystemStore) => state.setIsShowCard)
     const setIsShowSetting = useSystemStore((state: TSystemStore) => state.setIsShowSetting)
@@ -55,6 +54,8 @@ export default memo(function InputBox() {
     const setCurrentChat = useChatsStore((state: TChatsStore) => state.setCurrentChat)
     const newChat = useChatsStore((state: TChatsStore) => state.newChat)
     const setMessage = useChatsStore((state: TChatsStore) => state.setMessage)
+
+    const promptList = [...prompts.prompt, ...prompts.systemPrompt]
 
     const OpenSettingHandler = () => {
         setIsShowSetting(!isShowSetting)
