@@ -54,6 +54,40 @@ function SettingSystemConfig() {
             <div className="border w-full rounded-2xl">
                 <div className="flex items-center justify-between p-2 hover:cursor-default border-b h-12">
                     <div>
+                        <Tooltip title="隐藏ChatCard标志" placement="bottomRight" arrow={false}>
+                            <span className="text-sm">隐藏ChatCard</span>
+                        </Tooltip>
+                    </div>
+                    <div>
+                        <Switch className='bg-zinc-400' checkedChildren="显示" unCheckedChildren="隐藏"
+                            defaultChecked={config.showHeader} onChange={setConfigHandler('showHeader')} />
+                    </div>
+                </div>
+                <div className="flex items-center justify-between p-2 hover:cursor-default h-12">
+                    <div>
+                        <Tooltip title="可以选择不同的发送方式" placement="bottomRight" arrow={false}>
+                            <span className="text-sm">发送键</span>
+                        </Tooltip>
+                    </div>
+                    <div>
+                        <Select
+                            defaultValue={config.sendMethod}
+                            style={{ width: 160 }}
+                            onChange={setConfigHandler('sendMethod')}
+                            options={[
+                                { value: 'Enter', label: 'Enter' },
+                                { value: 'Ctrl', label: 'Ctrl+Enter' },
+                                { value: 'Shift', label: 'Shift+Enter' },
+                                { value: 'Alt', label: 'Alt+Enter' },
+                                { value: 'Meta', label: 'Meta+Enter' },
+                            ]}
+                        />
+                    </div>
+                </div>
+            </div>
+            <div className="border w-full rounded-2xl">
+                <div className="flex items-center justify-between p-2 hover:cursor-default border-b h-12">
+                    <div>
                         <Tooltip title="选择不同聊天模型" placement="bottomRight" arrow={false}>
                             <span className="text-sm">模型(model)</span>
                         </Tooltip>

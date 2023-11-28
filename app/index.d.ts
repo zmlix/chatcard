@@ -75,6 +75,8 @@ type TSystemConfig = {
     autoSkip: boolean
     autoRender: boolean
     seed?: number
+    sendMethod?: 'Ctrl' | 'Shift' | 'Alt' | 'Meta' | 'Enter'
+    showHeader?: boolean
 }
 
 type TPrompts = {

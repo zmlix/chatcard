@@ -15,7 +15,9 @@ const config: TSystemConfig = {
     max_tokens: 0,
     autoSkip: false,
     autoRender: true,
-    seed: 0
+    seed: 0,
+    sendMethod: 'Enter',
+    showHeader: true
 }
 
 export const useSystemStore = create<TSystemStoreState & TSystemStoreAction>()(

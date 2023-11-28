@@ -47,6 +47,7 @@ export default memo(function InputBox() {
     const defalutModel = useChatsStore((state: TChatsStore) => state.getConfig().model)
     const prompts = useSystemStore((state: TSystemStore) => state.prompts)
     const sendingMsgId = useSystemStore((state: TSystemStore) => state.sendingMsgId)
+    const sendMethod = useSystemStore((state: TSystemStore) => state.config.sendMethod)
     const setIsShowCard = useSystemStore((state: TSystemStore) => state.setIsShowCard)
     const setIsShowSetting = useSystemStore((state: TSystemStore) => state.setIsShowSetting)
     const clearMessage = useChatsStore((state: TChatsStore) => state.clearMessage)
@@ -105,11 +106,24 @@ export default memo(function InputBox() {
     }
 
     const inputEnterHandler = (e: any) => {
-        if (mention) {
-            console.log(mentionOptions)
-        }
-        if (e.ctrlKey) {
+        console.log(e)
+        if (sendMethod === 'Ctrl' && e.ctrlKey) {
+            e.preventDefault()
             submitHandler()()
+        } else if (sendMethod === 'Shift' && e.shiftKey) {
+            e.preventDefault()
+            submitHandler()()
+        } else if (sendMethod === 'Alt' && e.altKey) {
+            e.preventDefault()
+            submitHandler()()
+        } else if (sendMethod === 'Meta' && e.metaKey) {
+            e.preventDefault()
+            submitHandler()()
+        } else if (sendMethod === 'Enter') {
+            if (!(e.ctrlKey || e.shiftKey || e.altKey || e.metaKey)) {
+                e.preventDefault()
+                submitHandler()()
+            }
         }
     }
 
@@ -291,7 +305,7 @@ export default memo(function InputBox() {
                     ref={textRef}
                     value={text}
                     autoSize={{ minRows: 1, maxRows: 10 }}
-                    placeholder='Ctrl+Enter发送 /触发补全 :触发命令'
+                    placeholder='/触发补全 :触发命令'
                     onChange={onChangeHandler}
                     onPressEnter={inputEnterHandler}
                 />
