@@ -106,12 +106,6 @@ export function sendMessageApi(message: TMessage, resend?: boolean, fileList?: a
                 e.data = e.data.substring(index + 5)
                 payload = JSON.parse(e.data)
             } else {
-                useChatsStore.getState().setMessage(msgId, 'message',
-                    '```json\n' +
-                    JSON.stringify({ details: '解析错误' }, null, 4) +
-                    '\n```'
-                )
-                useChatsStore.getState().setMessage(msgId, 'status', 'error')
                 return
             }
         }
