@@ -27,7 +27,7 @@ export default memo(function CardMain({ message, render, edit, quitEditHandler, 
                 pre.classList.add('has-copy-button')
                 const copyElement = document.createElement('div')
                 copyElement.classList.add('flex', 'justify-end', 'w-full', 'h-0', 'relative', 'right-7', 'top-8')
-                copyElement.innerHTML = '<button type="button" class="ant-btn css-dev-only-do-not-override-2i2tap ant-btn-default ant-btn-sm"><span>复 制</span></button>'
+                copyElement.innerHTML = '<button type="button" class="ant-btn css-dev-only-do-not-override-2i2tap css-2i2tap ant-btn-default ant-btn-sm"><span>复 制</span></button>'
                 copyElement.addEventListener('mouseover', () => {
                     copyElement.style.display = ''
                 })
