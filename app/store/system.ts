@@ -25,7 +25,7 @@ export const useSystemStore = create<TSystemStoreState & TSystemStoreAction>()(
         config: config,
         isSending: false,
         sendingMsgId: 0,
-        isShowSetting: true,
+        isShowSetting: false,
         isShowCard: true,
         needScroll: false,
         prompts: {

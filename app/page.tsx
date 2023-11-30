@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import Setting from "./ui/setting/setting"
 import ChatCard from "./ui/chatcard/chatCard"
 import { useSystemStore } from "./store/system"
@@ -8,10 +8,9 @@ import { TSystemStore } from "."
 export default function App() {
   console.log("app")
 
-  const isShowSetting = useSystemStore((state: TSystemStore) => state.isShowSetting)
-  const isShowCard = useSystemStore((state: TSystemStore) => state.isShowCard)
   const initPrompts = useSystemStore((state: TSystemStore) => state.initPrompts)
   const setIsShowSetting = useSystemStore((state: TSystemStore) => state.setIsShowSetting)
+  const setIsShowCard = useSystemStore((state: TSystemStore) => state.setIsShowCard)
 
   useEffect(() => {
     console.log("initPrompts")
@@ -19,20 +18,24 @@ export default function App() {
     if (window.innerWidth <= 768) {
       setIsShowSetting(false)
     }
-  }, [initPrompts, setIsShowSetting])
+    setIsShowCard(true)
+  }, [initPrompts, setIsShowSetting, setIsShowCard])
 
-  const settingClass = "flex flex-col gap-1 bg-white border rounded-2xl p-2 max-w-lg w-96"
-  const chatCardClass = "flex flex-col bg-white border rounded-2xl p-2 w-full"
+  useEffect(() => {
+    console.log("resize...")
+    window.addEventListener('resize', () => {
+      if (window.innerWidth <= 768) {
+        setIsShowSetting(false)
+      }
+      setIsShowCard(true)
+    })
+  }, [setIsShowSetting, setIsShowCard])
 
   return (
     <div className="m-0 p-5 w-full h-full bg-zinc-50">
       <div className="flex gap-2 w-full h-full">
-        <div className={isShowSetting ? settingClass : 'hidden'} suppressHydrationWarning>
-          <Setting></Setting>
-        </div>
-        <div className={isShowCard ? chatCardClass : 'hidden'}>
-          <ChatCard></ChatCard>
-        </div>
+        <Setting></Setting>
+        <ChatCard></ChatCard>
       </div>
     </div>
   )
