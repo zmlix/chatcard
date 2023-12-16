@@ -1,5 +1,5 @@
 import { useEffect, useState, memo, useRef } from 'react';
-import { Input, Button, message as sysMessage } from 'antd'
+import { Input, Button, Typography, message as sysMessage } from 'antd'
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import Markdown from './markdown';
 import copy from "copy-to-clipboard";
@@ -66,7 +66,9 @@ export default memo(function CardMain({ message, render, edit, quitEditHandler, 
             </div> :
                 <div className=' hover:cursor-text overflow-auto'>
                     {render ? <div ref={markdownRef}><Markdown message={message}></Markdown></div> :
-                        <pre className=' whitespace-pre-line'>{message}</pre>}
+                        <pre className=' whitespace-pre-line'>
+                            <Typography.Paragraph copyable={{ tooltips: ['复制', '复制成功'], }}>{message}</Typography.Paragraph>
+                        </pre>}
                 </div>
             }
         </div>

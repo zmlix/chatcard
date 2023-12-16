@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Button, Input, Space, Popconfirm, message } from "antd"
+import { Button, Input, Space, Popconfirm, message, Typography } from "antd"
 import { DeleteFilled, FormOutlined, CheckOutlined, QuestionCircleOutlined, PlusOutlined } from "@ant-design/icons"
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -81,7 +81,7 @@ export default function SettingChatCard({ cid, index }: any) {
                         <div className="w-48">
                             <div className='flex w-48 h-6'>
                                 <div className='truncate text-ellipsis hover:cursor-text'>
-                                    {chatTitle}
+                                    <Typography.Text style={{ fontSize: 16 }}>{chatTitle}</Typography.Text>
                                 </div>
                             </div>
                             <div className="font-serif text-sm text-stone-600">
