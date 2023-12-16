@@ -46,6 +46,8 @@ export default memo(function InputBox() {
     const modelOptions = useSystemStore((state: TSystemStore) => state.models)
     const defalutModel = useChatsStore((state: TChatsStore) => state.getConfig().model)
     const prompts = useSystemStore((state: TSystemStore) => state.prompts)
+    const showEmoji = useSystemStore((state: TSystemStore) => state.config.showEmoji)
+    const showUpload = useSystemStore((state: TSystemStore) => state.config.showUpload)
     const sendingMsgId = useSystemStore((state: TSystemStore) => state.sendingMsgId)
     const sendMethod = useSystemStore((state: TSystemStore) => state.config.sendMethod)
     const setIsShowCard = useSystemStore((state: TSystemStore) => state.setIsShowCard)
@@ -310,16 +312,16 @@ export default memo(function InputBox() {
                     onPressEnter={inputEnterHandler}
                 />
                 <div className='flex items-end gap-1 h-full'>
-                    <div className='hidden group-hover:flex' >
+                    {(showEmoji || showUpload) && <div className='hidden group-hover:flex' >
                         <Button.Group>
-                            <Button style={{ width: 30 }} shape="circle"
-                                icon={<SmileOutlined />} block onClick={() => setEmoji(!emoji)} />
-                            <Badge count={fileList.length} size="small" offset={[-3, 3]} styles={{ indicator: { zIndex: 9999 } }}>
+                            {showEmoji && <Button style={{ width: 30 }} shape="circle"
+                                icon={<SmileOutlined />} block onClick={() => setEmoji(!emoji)} />}
+                            {showUpload && <Badge count={fileList.length} size="small" offset={[-3, 3]} styles={{ indicator: { zIndex: 9999 } }}>
                                 <Button style={{ width: 30 }} shape="circle"
                                     icon={<UploadOutlined />} block onClick={() => setUpload(!upload)} />
-                            </Badge>
+                            </Badge>}
                         </Button.Group>
-                    </div>
+                    </div>}
                     <Dropdown.Button type="primary" icon={<SendOutlined />} onClick={submitHandler()} menu={{ items: modelOptions, onClick: submitWithModelHandler }}>发送</Dropdown.Button>
                 </div>
                 <div className={emoji ? 'absolute right-8 bottom-16 flex flex-row-reverse mb-2 z-50' : 'hidden'}>

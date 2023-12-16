@@ -55,12 +55,34 @@ function SettingSystemConfig() {
                 <div className="flex items-center justify-between p-2 hover:cursor-default border-b h-12">
                     <div>
                         <Tooltip title="隐藏ChatCard标志" placement="bottomRight" arrow={false}>
-                            <span className="text-sm">隐藏ChatCard</span>
+                            <span className="text-sm">ChatCard标志</span>
                         </Tooltip>
                     </div>
                     <div>
                         <Switch className='bg-zinc-400' checkedChildren="显示" unCheckedChildren="隐藏"
                             defaultChecked={config.showHeader} onChange={setConfigHandler('showHeader')} />
+                    </div>
+                </div>
+                <div className="flex items-center justify-between p-2 hover:cursor-default border-b h-12">
+                    <div>
+                        <Tooltip title="关闭Emoji选择器,使用系统输入法输入" placement="bottomRight" arrow={false}>
+                            <span className="text-sm">Emoji选择器</span>
+                        </Tooltip>
+                    </div>
+                    <div>
+                        <Switch className='bg-zinc-400' checkedChildren="开启" unCheckedChildren="关闭"
+                            defaultChecked={config.showEmoji} onChange={setConfigHandler('showEmoji')} />
+                    </div>
+                </div>
+                <div className="flex items-center justify-between p-2 hover:cursor-default border-b h-12">
+                    <div>
+                        <Tooltip title="关闭文件上传功能" placement="bottomRight" arrow={false}>
+                            <span className="text-sm">文件上传图标</span>
+                        </Tooltip>
+                    </div>
+                    <div>
+                        <Switch className='bg-zinc-400' checkedChildren="开启" unCheckedChildren="关闭"
+                            defaultChecked={config.showUpload} onChange={setConfigHandler('showUpload')} />
                     </div>
                 </div>
                 <div className="flex items-center justify-between p-2 hover:cursor-default h-12">

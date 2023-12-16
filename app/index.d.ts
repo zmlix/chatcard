@@ -77,6 +77,8 @@ type TSystemConfig = {
     seed?: number
     sendMethod?: 'Ctrl' | 'Shift' | 'Alt' | 'Meta' | 'Enter'
     showHeader?: boolean
+    showEmoji?: boolean
+    showUpload?: boolean
 }
 
 type TPrompts = {
