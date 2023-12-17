@@ -1,8 +1,7 @@
 import { DndContext } from '@dnd-kit/core';
-import { SortableContext, arrayMove } from '@dnd-kit/sortable';
+import { SortableContext } from '@dnd-kit/sortable';
 import { TChatsStore, TSystemStore } from "@/app";
-import { PlusOutlined, RedoOutlined } from "@ant-design/icons"
-import { Button } from "antd"
+import { RedoOutlined } from "@ant-design/icons"
 import SettingChatCard from "./card"
 import { useChatsStore } from "@/app/store/chats"
 import { useShallow } from 'zustand/react/shallow';
@@ -13,7 +12,6 @@ export default function SettingMain() {
 
     const currentChat = useChatsStore((state: TChatsStore) => state.currentChat)
     const chatsId = useChatsStore(useShallow((state: TChatsStore) => state.chats.map((chat) => chat.id)))
-    const newChat = useChatsStore((state: TChatsStore) => state.newChat)
     const moveChats = useChatsStore((state: TChatsStore) => state.moveChats)
     const setCurrentChat = useChatsStore((state: TChatsStore) => state.setCurrentChat)
 
@@ -43,10 +41,9 @@ export default function SettingMain() {
                     <div className='flex gap-2 items-center'>
                         <span>剩余Token数量</span>
                         <span className='font-sans text-stone-900 text-base pb-0.5'>0</span>
-                    </div>
+                        </div>
                     <Button className='hover:animate-spin' size='small' type="link" icon={<RedoOutlined />} />
                 </div>} */}
-            <Button block onClick={newChat} icon={<PlusOutlined />}>新的聊天</Button>
             <DndContext onDragEnd={handleDragEnd}>
                 <SortableContext items={chatsId}>
                     <div className="flex flex-col gap-1 mt-2 mb-2">
