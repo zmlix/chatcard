@@ -60,6 +60,7 @@ export default memo(function CardBox() {
             fold: false,
             render: true,
             skip: false,
+            loading: false,
             token: 0
         }
         sendMessageApi(msg)

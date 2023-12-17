@@ -173,9 +173,10 @@ export function getModelApi(setLoading: any) {
     const url = (new URL(systemConfig.api_url))
     const baseURL = url.hostname
     const protocol = url.protocol
-    console.log(baseURL)
+    const port = url.port
+    console.log(`${protocol}//${baseURL}:${port}`)
     setLoading(true)
-    axios.get(`${protocol}//${baseURL}/v1/models`, {
+    axios.get(`${protocol}//${baseURL}:${port}/v1/models`, {
         headers: {
             "Content-Type": "application/json",
             'Authorization': `Bearer ${systemConfig.api_key}`,

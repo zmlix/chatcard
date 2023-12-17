@@ -14,7 +14,7 @@ export default memo(function CardFooter({ loading, role, fold, message, model, s
                 </div>
             </div>}
             {!fold && <div className='flex justify-between items-center border-t h-6'>
-                <div className='ml-2'><Spin className={loading ? '' : 'hidden'} size="small" /></div>
+                <div className='ml-2'><Spin spinning={!!loading} size="small" /></div>
                 <div className='w-max'>
                     {role === 'user' ? <Select
                         bordered={false}

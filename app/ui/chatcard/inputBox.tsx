@@ -36,8 +36,11 @@ const cmdList = [
     },
 ]
 
-export default memo(function InputBox() {
+export default memo(function InputBox({ setSpinning }: any) {
     console.log("InputBox")
+    setTimeout(() => {
+        setSpinning(false)
+    }, 100)
     const { TextArea } = Input;
     const [text, setText] = useState('')
 
@@ -91,6 +94,7 @@ export default memo(function InputBox() {
             fold: false,
             render: true,
             skip: false,
+            loading: false,
         }
         console.log(msg)
         if (fileList.length !== 0) {
