@@ -152,9 +152,65 @@ export const useChatsStore = create<TChatsStore>()(
           state.chats[chatId].messages.push(msg)
         }
       }),
+    addMessageWithOffset: (msgId: number, msg: TMessage, offset: number | undefined = 1, chatId: number | undefined = undefined) =>
+      set((state) => {
+        if (chatId === undefined) {
+          chatId = get().currentChat
+        }
+        const msg1_pos = state.chats[chatId].messages.findIndex((msg) => msg.id === msgId)
+        state.chats[chatId].messages.splice(msg1_pos + offset, 0, msg)
+      }),
     removeMessage: (chatId: number, msgId: number) =>
       set((state) => {
         state.chats[chatId].messages = state.chats[chatId].messages.filter((msg: TMessage) => msg.id !== msgId)
+      }),
+    removeCallMessage: (msgId: number, chatId: number | undefined = undefined) =>
+      set((state) => {
+        if (chatId === undefined) {
+          chatId = get().currentChat
+        }
+        const index = state.chats[chatId].messages.findIndex((msg) => msg.id === msgId) - 1
+        state.chats[chatId].messages = state.chats[chatId].messages.filter((msg: TMessage) => msg.id !== msgId)
+        var flag = true
+
+        const del_ = (state: any, index: number, chatId: number) => {
+          if (!flag) return
+          flag = false
+          state.chats[chatId].messages = state.chats[chatId].messages.filter((msg: TMessage, idx: number) => {
+            if (idx === index && ((msg.role === 'assistant' && msg.type === 'tool') || msg.role === 'tool')) {
+              flag = true
+              return false
+            }
+            return true
+          })
+          del_(state, index - 1, chatId)
+        }
+        del_(state, index, chatId)
+      }),
+    setCallMessage: (msgId: number, attr: string, value: any, chatId: number | undefined = undefined) =>
+      set((state) => {
+        if (chatId === undefined) {
+          chatId = get().currentChat
+        }
+        const index = state.chats[chatId].messages.findIndex((msg) => msg.id === msgId) - 1
+        var flag = true
+
+        const set_ = (state: any, index: number, chatId: number) => {
+          if (!flag) return
+          flag = false
+          state.chats[chatId].messages = state.chats[chatId].messages.map((msg: TMessage, idx: number) => {
+            if (idx === index && ((msg.role === 'assistant' && msg.type === 'tool') || msg.role === 'tool')) {
+              flag = true
+              return {
+                ...msg,
+                [attr]: value
+              }
+            }
+            return msg
+          })
+          set_(state, index - 1, chatId)
+        }
+        set_(state, index, chatId)
       }),
     clearMessage: (chatId: number | undefined = undefined) =>
       set((state) => {
@@ -173,6 +229,22 @@ export const useChatsStore = create<TChatsStore>()(
             return {
               ...msg,
               [attr]: value
+            }
+          } else {
+            return msg
+          }
+        })
+      }),
+    addToolLog: (msgId: number, log: string, chatId: number | undefined = undefined) =>
+      set((state) => {
+        if (chatId === undefined) {
+          chatId = get().currentChat
+        }
+        state.chats[chatId].messages = state.chats[chatId].messages.map((msg: TMessage) => {
+          if (msg.id === msgId) {
+            return {
+              ...msg,
+              "toolLog": (msg.toolLog ? msg.toolLog : "") + log + "\n"
             }
           } else {
             return msg

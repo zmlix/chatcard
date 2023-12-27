@@ -2,11 +2,15 @@ import { Button, Radio } from "antd"
 import { SettingOutlined, CommentOutlined, ThunderboltOutlined, AppstoreAddOutlined } from "@ant-design/icons"
 import { TSettingView } from "./setting"
 import { useSystemStore } from "@/app/store/system"
+import { TSystemStore } from "@/app"
 
 export default function SettingFooter({ view, setView }: any) {
 
-    const systemStore = useSystemStore()
-    const { isShowSetting, isShowCard, setIsShowCard, setIsShowSetting } = systemStore
+    const isShowSetting = useSystemStore((state: TSystemStore) => state.isShowSetting)
+    const isShowCard = useSystemStore((state: TSystemStore) => state.isShowCard)
+    const setIsShowCard = useSystemStore((state: TSystemStore) => state.setIsShowCard)
+    const setIsShowSetting = useSystemStore((state: TSystemStore) => state.setIsShowSetting)
+    const plugin = useSystemStore((state: TSystemStore) => state.config.plugin)
 
     const OpenSettingHandler = () => {
         setIsShowSetting(!isShowSetting)
@@ -22,25 +26,29 @@ export default function SettingFooter({ view, setView }: any) {
         setView(view)
     }
 
-    const views: Array<{ name: string, view: TSettingView, icon: any }> = [
+    const views: Array<{ name: string, view: TSettingView, show: boolean, icon: any }> = [
         {
             name: "聊天",
             view: "main",
+            show: true,
             icon: <CommentOutlined />
         },
         {
             name: "设置",
             view: "config",
+            show: true,
             icon: <SettingOutlined />
         },
         {
             name: "预设",
             view: "prompt",
+            show: true,
             icon: <ThunderboltOutlined />
         },
         {
             name: "插件",
             view: "plugin",
+            show: !!plugin,
             icon: <AppstoreAddOutlined />
         }
     ]
@@ -49,9 +57,8 @@ export default function SettingFooter({ view, setView }: any) {
         <div className="flex flex-col gap-1">
             <div className="flex gap-1">
                 <Button.Group className="w-full">
-                    {views.map((v, idx) => (
+                    {views.filter(v => v.show).map((v, idx) => (
                         <Button key={idx} icon={v.icon} block onClick={switchViewHandler(v.view)}
-                            disabled={v.view === 'plugin'}
                             type={v.view === view ? 'primary' : undefined}>{v.name}</Button>))}
                 </Button.Group>
             </div>

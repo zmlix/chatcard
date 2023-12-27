@@ -1,6 +1,5 @@
 import dynamic from 'next/dynamic'
 import { useState } from "react"
-import SettingFooter from "./footer"
 import SettingConfig from "./config"
 import SettingPrompt from "./prompt"
 import SettingPlugin from "./plugin"
@@ -10,6 +9,7 @@ import { TSystemStore, TChatsStore } from '@/app'
 import { PlusOutlined } from "@ant-design/icons"
 import { Button } from "antd"
 const SettingMain = dynamic(() => import('./main'), { ssr: false })
+const SettingFooter = dynamic(() => import('./footer'), { ssr: false })
 
 export type TSettingView = 'main' | 'config' | 'prompt' | 'plugin'
 
@@ -26,10 +26,9 @@ export default function Setting() {
         setView
     }
 
-    const settingClass = "flex flex-col gap-1 bg-white border rounded-2xl p-2 "
-
     return (
-        <div className={isShowSetting ? (settingClass + (isShowCard ? "max-w-lg w-96" : "w-full")) : 'hidden'} suppressHydrationWarning>
+        <div className={isShowSetting ? "flex flex-col gap-1 bg-white border rounded-2xl p-2" : 'hidden'}
+            style={{ width: isShowCard ? 513 : '100%' }} suppressHydrationWarning>
             {{
                 "main": <>
                     <Button block onClick={newChat} icon={<PlusOutlined />}>新的聊天</Button>

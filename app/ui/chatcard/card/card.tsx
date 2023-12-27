@@ -16,7 +16,9 @@ export default memo(function Card({ mid }: any) {
     const currentChat: number = useChatsStore((state: TChatsStore) => state.currentChat)
     const msg: TMessage = useChatsStore(useShallow((state: TChatsStore) => state.getMessage(mid)))
     const setMessage = useChatsStore((state: TChatsStore) => state.setMessage)
+    const setCallMessage = useChatsStore((state: TChatsStore) => state.setCallMessage)
     const removeMessage = useChatsStore((state: TChatsStore) => state.removeMessage)
+    const removeCallMessage = useChatsStore((state: TChatsStore) => state.removeCallMessage)
     const getIsSending = useSystemStore((state: TSystemStore) => state.getIsSending)
 
     const renderMsg = (typeof msg.message === 'string' ? msg.message :
@@ -28,6 +30,7 @@ export default memo(function Card({ mid }: any) {
 
     const foldHandler = () => {
         setEdit(false)
+        setCallMessage(msg.id, 'hidden', !msg.fold)
         setMessage(msg.id, 'fold', !msg.fold)
     }
 
@@ -59,7 +62,8 @@ export default memo(function Card({ mid }: any) {
             })
             return
         }
-        removeMessage(currentChat, msg.id)
+        // removeMessage(currentChat, msg.id)
+        removeCallMessage(msg.id, currentChat)
     }
 
     const renderHandler = (checked: boolean) => {
@@ -69,6 +73,7 @@ export default memo(function Card({ mid }: any) {
 
     const skipHandler = (checked: boolean) => {
         console.log("skip...", checked)
+        setCallMessage(msg.id, 'skip', checked)
         setMessage(msg.id, 'skip', checked)
     }
 
@@ -98,8 +103,8 @@ export default memo(function Card({ mid }: any) {
     }
 
     const mainProps = {
+        msg,
         message: renderMsg,
-        render: msg.render,
         edit,
         quitEditHandler,
         submitEditHandler,
@@ -111,20 +116,28 @@ export default memo(function Card({ mid }: any) {
     }
 
     const footerProps = {
-        loading: msg.loading,
-        role: msg.role,
-        fold: msg.fold,
+        msg,
         message: renderMsg,
-        model: msg.model,
-        status: msg.status,
         modelHandler
     }
 
     return (
-        <div className='border rounded w-full mb-0.5'>
-            <CardTools {...toolsProps}></CardTools>
-            {!msg.fold && <CardMain {...mainProps}></CardMain>}
-            {!edit && <CardFooter {...footerProps}></CardFooter>}
-        </div>
+        <>
+            <div className={!!msg.hidden ? 'hidden' : 'border rounded w-full mb-0.5'}>
+                {(msg.role === 'assistant' && msg.type === 'tool')
+                    ? <>
+                        <CardMain {...mainProps}></CardMain>
+                        <CardFooter {...footerProps}></CardFooter>
+                    </>
+                    :
+                    <>
+                        <CardTools {...toolsProps}></CardTools>
+                        {!msg.fold && <CardMain {...mainProps}></CardMain>}
+                        {!edit && <CardFooter {...footerProps}></CardFooter>}
+                    </>
+                }
+            </div>
+            {!!msg.hidden && <div className='h-0.5'></div>}
+        </>
     )
 })

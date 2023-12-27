@@ -15,10 +15,13 @@
     "@dnd-kit/sortable": "^8.0.0",
     "@emoji-mart/data": "^1.1.2",
     "@emoji-mart/react": "^1.1.1",
+    "@improbable-eng/grpc-web": "^0.15.0",
+    "@types/google-protobuf": "^3.15.12",
     "antd": "^5.11.0",
     "axios": "^1.6.2",
     "copy-to-clipboard": "^3.3.3",
     "emoji-mart": "^5.5.2",
+    "google-protobuf": "^3.21.2",
     "immer": "^10.0.3",
     "katex": "^0.16.9",
     "next": "14.0.1",
@@ -31,6 +34,7 @@
     "remark-gfm": "^4.0.0",
     "remark-math": "^6.0.0",
     "sse": "github:mpetazzoni/sse.js",
+    "ts-protoc-gen": "^0.15.0",
     "zustand": "^4.4.6"
   },
   "devDependencies": {

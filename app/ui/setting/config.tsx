@@ -85,7 +85,7 @@ function SettingSystemConfig() {
                             defaultChecked={config.showUpload} onChange={setConfigHandler('showUpload')} />
                     </div>
                 </div>
-                <div className="flex items-center justify-between p-2 hover:cursor-default h-12">
+                <div className="flex items-center justify-between p-2 hover:cursor-default border-b h-12">
                     <div>
                         <Tooltip title="可以选择不同的发送方式" placement="bottomRight" arrow={false}>
                             <span className="text-sm">发送键</span>
@@ -104,6 +104,17 @@ function SettingSystemConfig() {
                                 { value: 'Meta', label: 'Meta+Enter' },
                             ]}
                         />
+                    </div>
+                </div>
+                <div className="flex items-center justify-between p-2 hover:cursor-default h-12">
+                    <div>
+                        <Tooltip title="选择是否启用插件功能" placement="bottomRight" arrow={false}>
+                            <span className="text-sm">插件</span>
+                        </Tooltip>
+                    </div>
+                    <div>
+                        <Switch className='bg-zinc-400' checkedChildren="开启" unCheckedChildren="关闭"
+                            defaultChecked={config.plugin} onChange={setConfigHandler('plugin')} />
                     </div>
                 </div>
             </div>

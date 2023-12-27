@@ -20,6 +20,7 @@ const config: TSystemConfig = {
     showHeader: true,
     showEmoji: false,
     showUpload: false,
+    plugin: false,
 }
 
 export const useSystemStore = create<TSystemStoreState & TSystemStoreAction>()(

@@ -1,17 +1,41 @@
 type TMessage = {
     id: number
     message: any
-    type: 'text' | 'img'
-    status: 'success' | 'loading' | 'error' | 'stop'
-    role: 'system' | 'user' | 'assistant'
+    type: 'text' | 'img' | 'tool'
+    status: 'success' | 'loading' | 'calling' | 'error' | 'stop'
+    role: 'system' | 'user' | 'assistant' | 'tool'
     createTime: Date
     updateTime: Date
     model: string
     fold: boolean
     render: boolean
     skip: boolean
+    hidden?: boolean
     loading?: boolean
     token?: number
+    tool_calls?: Array<Tool>
+    tool_call_function_name?: string
+    tool_call_id?: string
+    toolLog?: string
+    callStep?: number
+}
+
+type Tool = {
+    index: number
+    id: string
+    type: string
+    function: ToolFunction
+}
+
+type ToolFunction = {
+    name: string
+    arguments: string
+}
+
+
+type TTools = {
+    name: string
+    description: string
 }
 
 type TChatConfig = {
@@ -52,9 +76,13 @@ type TChatsStoreAction = {
     changeMessages: (chatId: number, messages: Array<TMessage>) => void
     newMessage: (chatId: number) => void
     addMessage: (msg: TMessage, pos?: number, chatId?: number) => void
+    addMessageWithOffset: (msgId: number, msg: TMessage, offset?: number, chatId?: number) => voud
     removeMessage: (chatId: number, msgId: number) => void
+    removeCallMessage: (msgId: number, chatId?: number) => void
+    setCallMessage: (msgId: number, attr: string, value: any, chatId?: number) => void
     clearMessage: (chatId?: number) => void
     setMessage: (msgId: number, attr: string, value: any, chatId?: number) => void
+    addToolLog: (msgId: number, log: string, chatId?: number) => void
     getConfig: (chatId?: number) => TChatConfig
     setConfig: (attr: string, value: any, chatId?: number) => void
     getMessage: (msgId: number, chatId?: number) => TMessage
@@ -79,6 +107,7 @@ type TSystemConfig = {
     showHeader?: boolean
     showEmoji?: boolean
     showUpload?: boolean
+    plugin?: boolean
 }
 
 type TPrompts = {
@@ -116,6 +145,41 @@ type TSystemStoreAction = {
 
 type TSystemStore = TSystemStoreState & TSystemStoreAction
 
+type TPluginInfo = {
+    type: string,
+    function: {
+        name: string,
+        description: string,
+        parameters?: any
+    }
+}
+
+type TPlugin = {
+    name: string
+    call?: string
+    display: string
+    img?: string
+    version: string
+    info: Array<TPluginInfo>
+    options?: any
+    disable?: boolean
+}
+
+type TPluginStoreState = {
+    url: string
+    plugins: Array<TPlugin>
+}
+
+type TPluginStoreAction = {
+    setPlugin: (attr: string, value: any) => void
+    setUrl: (url: string) => void
+    setPlugins: (plugins: Array<TPlugin>) => void
+    setPluginsAttr: (index: number, attr: string, value: any) => void
+    findPluginName: (call: string) => string
+}
+
+type TPluginStore = TPluginStoreState & TPluginStoreAction
+
 export {
     TMessage,
     TChatConfig,
@@ -127,5 +191,11 @@ export {
     TPrompts,
     TSystemStoreState,
     TSystemStoreAction,
-    TSystemStore
+    TSystemStore,
+    Tool,
+    TPlugin,
+    TPluginInfo,
+    TPluginStoreAction,
+    TPluginStoreState,
+    TPluginStore
 }

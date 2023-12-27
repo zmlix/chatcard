@@ -60,6 +60,8 @@ export default memo(function InputBox({ setSpinning }: any) {
     const setCurrentChat = useChatsStore((state: TChatsStore) => state.setCurrentChat)
     const newChat = useChatsStore((state: TChatsStore) => state.newChat)
     const setMessage = useChatsStore((state: TChatsStore) => state.setMessage)
+    const getMessage = useChatsStore((state: TChatsStore) => state.getMessage)
+    const addMessageWithOffset = useChatsStore((state: TChatsStore) => state.addMessageWithOffset)
 
     const promptList = [...prompts.prompt, ...prompts.systemPrompt]
 
@@ -224,10 +226,32 @@ export default memo(function InputBox({ setSpinning }: any) {
         if (!isSending) {
             setMessage(sendingMsgId, 'loading', false)
             if (sendingMsgId !== 0) {
+                const sendingMsg = getMessage(sendingMsgId)
+                if (sendingMsg.role === 'assistant' && sendingMsg.type === 'tool') {
+                    let detailMsg = "停止请求"
+                    if (sendingMsg.callStep) {
+                        detailMsg = sendingMsg.callStep < 0 ? "执行失败" : "停止请求"
+                    }
+                    const errMsg: TMessage = {
+                        id: random32BitNumber(),
+                        message: '```json\n' + JSON.stringify({ details: detailMsg }, null, 4) + '\n```',
+                        type: 'text',
+                        status: 'error',
+                        role: 'assistant',
+                        createTime: new Date(),
+                        updateTime: new Date(),
+                        model: sendingMsg.model,
+                        fold: false,
+                        render: sendingMsg.render,
+                        skip: false,
+                        loading: false,
+                    }
+                    addMessageWithOffset(sendingMsgId, errMsg)
+                }
                 setMessage(sendingMsgId, 'status', 'stop')
             }
         }
-    }, [isSending, setMessage, sendingMsgId])
+    }, [isSending, sendingMsgId, setMessage, getMessage, addMessageWithOffset])
 
     const [emoji, setEmoji] = useState(false)
 

@@ -1,11 +1,13 @@
-import { TChatConfig, TMessage, TSystemConfig } from "..";
+import { TChatConfig, TMessage, TSystemConfig, Tool } from "..";
 import { SSE } from 'sse';
 import { message } from "antd";
 import { random32BitNumber } from '../utils/utils'
 import { useChatsStore } from "../store/chats";
 import { useSystemStore } from "../store/system";
 import axios from "axios";
-
+import { connectPlugin } from "./plugin";
+import { usePluginStore } from "../store/plugin";
+// http://localhost:5200/v1/chat/completions
 export function sendMessageApi(message: TMessage, resend?: boolean, fileList?: any[]) {
     const chatConfig: TChatConfig = useChatsStore.getState().getConfig()
     const systemConfig: TSystemConfig = useSystemStore.getState().config
@@ -35,7 +37,6 @@ export function sendMessageApi(message: TMessage, resend?: boolean, fileList?: a
         token: 0
     }
     let messages: Array<TMessage> = []
-
     if (fileList) {
         const imgs = fileList.map((f) => ({
             type: "image_url",
@@ -65,6 +66,8 @@ export function sendMessageApi(message: TMessage, resend?: boolean, fileList?: a
     setIsSending(true)
     setSendingMsgId(msgId)
     let msgContent = ""
+    const call_func: Array<Tool> = []
+    let toolLog = ""
     const sse = new SSE(
         systemConfig.api_url,
         {
@@ -74,10 +77,38 @@ export function sendMessageApi(message: TMessage, resend?: boolean, fileList?: a
             },
             payload: JSON.stringify({
                 "model": message.model,
-                "messages": messages.filter((msg) => !msg.skip).map((msg) => ({
-                    "role": msg.role,
-                    "content": msg.message
-                })),
+                "messages": messages.filter((msg) => !msg.skip).map((msg) => {
+                    if (msg.role === 'assistant') {
+                        if (msg.tool_calls?.length) {
+                            return {
+                                "role": msg.role,
+                                "content": msg.message,
+                                "tool_calls": msg.tool_calls
+                            }
+                        }
+                        return {
+                            "role": msg.role,
+                            "content": msg.message,
+                        }
+                    } else if (msg.role === 'tool') {
+                        return {
+                            "role": msg.role,
+                            "content": msg.message,
+                            "name": msg.tool_call_function_name,
+                            "tool_call_id": msg.tool_call_id
+                        }
+                    } else {
+                        return {
+                            "role": msg.role,
+                            "content": msg.message,
+                        }
+                    }
+                }),
+                "tools": !!useSystemStore.getState().config.plugin ?
+                    usePluginStore.getState().plugins
+                        .filter(plugin => !!!plugin.disable)
+                        .map(plugin => plugin.info[0]) : [],
+                "tool_choice": "auto",
                 "stream": true,
                 "top_p": chatConfig.top_p,
                 "temperature": chatConfig.temperature,
@@ -93,6 +124,15 @@ export function sendMessageApi(message: TMessage, resend?: boolean, fileList?: a
             useChatsStore.getState().setMessage(msgId, 'loading', false)
             if (resend === undefined || resend === false) {
                 useSystemStore.getState().setNeedScroll(true)
+            }
+            if (call_func.length) {
+                useChatsStore.getState().setMessage(msgId, 'loading', true)
+                useChatsStore.getState().setMessage(msgId, 'status', 'success')
+                useChatsStore.getState().setMessage(msgId, 'type', 'tool')
+                useChatsStore.getState().setMessage(msgId, 'tool_calls', call_func)
+                useChatsStore.getState().addToolLog(msgId, `调用信息: ${JSON.stringify(call_func)}`)
+                connectPlugin(msgId, call_func)
+                return
             }
             sse.close()
             return
@@ -113,6 +153,27 @@ export function sendMessageApi(message: TMessage, resend?: boolean, fileList?: a
             msgContent += payload.choices[0].delta.content
             useChatsStore.getState().setMessage(msgId, 'model', payload.model)
             useChatsStore.getState().setMessage(msgId, 'message', msgContent)
+        }
+        if (payload.choices[0].delta.tool_calls) {
+            const tool_calls = payload.choices[0].delta.tool_calls
+            if (call_func.length - 1 < tool_calls[0].index) {
+                const tool: Tool = {
+                    index: tool_calls[0].index,
+                    id: tool_calls[0].id,
+                    type: tool_calls[0].type,
+                    function: tool_calls[0].function,
+                }
+                useChatsStore.getState().setMessage(msgId, 'toolLog', `调用插件: ${tool_calls[0].function.name}\n`)
+                tool.function.arguments = tool_calls[0].arguments ? tool_calls[0].arguments : ""
+                call_func.push(tool)
+            }
+            if (tool_calls[0].function.arguments) {
+                call_func[tool_calls[0].index].function.arguments += tool_calls[0].function.arguments
+            }
+            useChatsStore.getState().setMessage(msgId, 'type', 'tool')
+            useChatsStore.getState().setMessage(msgId, 'status', 'calling')
+            useChatsStore.getState().setMessage(msgId, 'model', payload.model)
+            useChatsStore.getState().setMessage(msgId, 'callStep', 0)
         }
     })
     sse.addEventListener('readystatechange', (e: any) => {
@@ -200,3 +261,4 @@ export function getModelApi(setLoading: any) {
         setLoading(false)
     })
 }
+

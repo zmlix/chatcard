@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+option go_package="chatcard-plugin/pb/plugin;plugin";
+
+message CallRequest {
+  string name = 1;
+  string call = 2;
+  optional string arguments = 3;
+  string token = 4;
+  optional string options = 5;
+}
+
+enum Status {
+  SUCCESS = 0;
+  FAILED = 1;
+  PROCESS = 2;
+}
+
+message CallResponse {
+  Status status = 1;
+  string response = 2;
+}
+
+enum PluginOptionValueType {
+  STRING = 0;
+  NUMBER = 1;
+  BOOL = 2;
+}
+
+message PluginOption {
+  PluginOptionValueType type = 1;
+  string key = 2;
+  string value = 3;
+}
+
+message Plugin{
+  string name = 1;
+  optional string display = 2;
+  optional string img = 3;
+  string version = 4;
+  optional string info = 5;
+  repeated PluginOption options = 6;
+}
+
+message ConnectRequest {}
+
+message ConnectResponse {
+  Status status = 1;
+  repeated Plugin plugins = 2;
+}
+
+service PluginService {
+  rpc Connect(ConnectRequest) returns (ConnectResponse);
+  rpc Call(CallRequest) returns (stream CallResponse);
+}

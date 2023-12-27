@@ -3,12 +3,12 @@ import { memo } from "react";
 import { useSystemStore } from '@/app/store/system';
 import { TSystemStore } from '@/app';
 
-export default memo(function CardFooter({ loading, role, fold, message, model, status, modelHandler }: any) {
+export default memo(function CardFooter({ msg, message, modelHandler }: any) {
     const modelOptions = useSystemStore((state: TSystemStore) => state.models)
-
+    const { loading, role, type, fold, model, status } = msg
     return (
         <>
-            {fold && <div className='flex'>
+            {(fold && type !== 'tool') && <div className='flex'>
                 <div className='truncate text-ellipsis p-2'>
                     {message}
                 </div>
