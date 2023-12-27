@@ -125,15 +125,6 @@ export function sendMessageApi(message: TMessage, resend?: boolean, fileList?: a
             if (resend === undefined || resend === false) {
                 useSystemStore.getState().setNeedScroll(true)
             }
-            if (call_func.length) {
-                useChatsStore.getState().setMessage(msgId, 'loading', true)
-                useChatsStore.getState().setMessage(msgId, 'status', 'success')
-                useChatsStore.getState().setMessage(msgId, 'type', 'tool')
-                useChatsStore.getState().setMessage(msgId, 'tool_calls', call_func)
-                useChatsStore.getState().addToolLog(msgId, `调用信息: ${JSON.stringify(call_func)}`)
-                connectPlugin(msgId, call_func)
-                return
-            }
             sse.close()
             return
         }
@@ -180,6 +171,15 @@ export function sendMessageApi(message: TMessage, resend?: boolean, fileList?: a
         console.log(e)
         if (e.readyState >= 2) {
             if (!useSystemStore.getState().isSending) {
+                return
+            }
+            if (call_func.length) {
+                useChatsStore.getState().setMessage(msgId, 'loading', true)
+                useChatsStore.getState().setMessage(msgId, 'status', 'success')
+                useChatsStore.getState().setMessage(msgId, 'type', 'tool')
+                useChatsStore.getState().setMessage(msgId, 'tool_calls', call_func)
+                useChatsStore.getState().addToolLog(msgId, `调用信息: ${JSON.stringify(call_func)}`)
+                connectPlugin(msgId, call_func)
                 return
             }
             useChatsStore.getState().setMessage(msgId, 'loading', false)
