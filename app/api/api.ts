@@ -108,7 +108,7 @@ export function sendMessageApi(message: TMessage, resend?: boolean, fileList?: a
                     usePluginStore.getState().plugins
                         .filter(plugin => !!!plugin.disable)
                         .map(plugin => plugin.info[0]) : [],
-                "tool_choice": "auto",
+                "tool_choice": !!useSystemStore.getState().config.plugin ? "auto" : undefined,
                 "stream": true,
                 "top_p": chatConfig.top_p,
                 "temperature": chatConfig.temperature,

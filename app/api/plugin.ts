@@ -119,6 +119,9 @@ export function connectPlugin(msgId: number, call_func: Array<Tool> = [], index 
                 return
             }
         },
-        onEnd: (code: grpc.Code, msg: string | undefined, trailers: grpc.Metadata) => { }
+        onEnd: (code: grpc.Code, msg: string | undefined, trailers: grpc.Metadata) => { 
+            console.log(code, msg, trailers)
+            useChatsStore.getState().setMessage(msgId, 'loading', false)
+        }
     })
 }
