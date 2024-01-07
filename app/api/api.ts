@@ -102,10 +102,10 @@ export function sendMessageApi(message: TMessage, resend?: boolean, fileList?: a
         "temperature": chatConfig.temperature,
         "presence_penalty": chatConfig.presence_penalty,
         "frequency_penalty": chatConfig.frequency_penalty,
-        "max_tokens": chatConfig.max_tokens || undefined
+        "max_tokens": chatConfig.max_tokens || (message.model === "gpt-4-vision-preview" ? 2048 : undefined)
     }
 
-    if (!!useSystemStore.getState().config.plugin) {
+    if (!!useSystemStore.getState().config.plugin && message.model !== "gpt-4-vision-preview") {
         const tools = usePluginStore.getState().plugins
             .filter(plugin => !!!plugin.disable)
             .map(plugin => plugin.info[0])
