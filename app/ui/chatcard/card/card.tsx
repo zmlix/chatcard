@@ -124,7 +124,7 @@ export default memo(function Card({ mid }: any) {
     return (
         <>
             <div className={!!msg.hidden ? 'hidden' : 'border rounded w-full mb-0.5'}>
-                {(msg.role === 'assistant' && msg.type === 'tool')
+                {(msg.type === 'tool' || msg.role === 'tool')
                     ? <>
                         <CardMain {...mainProps}></CardMain>
                         <CardFooter {...footerProps}></CardFooter>

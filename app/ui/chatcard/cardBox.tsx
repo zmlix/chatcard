@@ -19,7 +19,7 @@ export default memo(function CardBox() {
     const needScroll = useSystemStore((state: TSystemStore) => state.needScroll)
     const currentChat = useChatsStore((state: TChatsStore) => state.currentChat)
     const messages = useChatsStore(useShallow((state: TChatsStore) =>
-        state.getCurrentChat().messages.filter((msg) => msg.role !== 'tool').map((msg) => msg.id)))
+        state.getCurrentChat().messages.filter((msg) => (msg.role !== 'tool' || msg.type === "img")).map((msg) => msg.id)))
     const setIsSending = useSystemStore((state: TSystemStore) => state.setIsSending)
     const setNeedScroll = useSystemStore((state: TSystemStore) => state.setNeedScroll)
 

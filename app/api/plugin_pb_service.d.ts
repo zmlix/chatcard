@@ -22,10 +22,20 @@ type PluginServiceCall = {
   readonly responseType: typeof plugin_pb.CallResponse;
 };
 
+type PluginServiceDirectory = {
+  readonly methodName: string;
+  readonly service: typeof PluginService;
+  readonly requestStream: false;
+  readonly responseStream: false;
+  readonly requestType: typeof plugin_pb.DirectoryRequest;
+  readonly responseType: typeof plugin_pb.DirectoryResponse;
+};
+
 export class PluginService {
   static readonly serviceName: string;
   static readonly Connect: PluginServiceConnect;
   static readonly Call: PluginServiceCall;
+  static readonly Directory: PluginServiceDirectory;
 }
 
 export type ServiceError = { message: string, code: number; metadata: grpc.Metadata }
@@ -70,5 +80,14 @@ export class PluginServiceClient {
     callback: (error: ServiceError|null, responseMessage: plugin_pb.ConnectResponse|null) => void
   ): UnaryResponse;
   call(requestMessage: plugin_pb.CallRequest, metadata?: grpc.Metadata): ResponseStream<plugin_pb.CallResponse>;
+  directory(
+    requestMessage: plugin_pb.DirectoryRequest,
+    metadata: grpc.Metadata,
+    callback: (error: ServiceError|null, responseMessage: plugin_pb.DirectoryResponse|null) => void
+  ): UnaryResponse;
+  directory(
+    requestMessage: plugin_pb.DirectoryRequest,
+    callback: (error: ServiceError|null, responseMessage: plugin_pb.DirectoryResponse|null) => void
+  ): UnaryResponse;
 }
 

@@ -168,6 +168,12 @@ export class ConnectResponse extends jspb.Message {
   setPluginsList(value: Array<Plugin>): void;
   addPlugins(value?: Plugin, index?: number): Plugin;
 
+  getDirectory(): string;
+  setDirectory(value: string): void;
+
+  getWeb(): string;
+  setWeb(value: string): void;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ConnectResponse.AsObject;
   static toObject(includeInstance: boolean, msg: ConnectResponse): ConnectResponse.AsObject;
@@ -182,6 +188,58 @@ export namespace ConnectResponse {
   export type AsObject = {
     status: StatusMap[keyof StatusMap],
     pluginsList: Array<Plugin.AsObject>,
+    directory: string,
+    web: string,
+  }
+}
+
+export class DirectoryRequest extends jspb.Message {
+  getEvent(): string;
+  setEvent(value: string): void;
+
+  clearPathsList(): void;
+  getPathsList(): Array<string>;
+  setPathsList(value: Array<string>): void;
+  addPaths(value: string, index?: number): string;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): DirectoryRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: DirectoryRequest): DirectoryRequest.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: DirectoryRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): DirectoryRequest;
+  static deserializeBinaryFromReader(message: DirectoryRequest, reader: jspb.BinaryReader): DirectoryRequest;
+}
+
+export namespace DirectoryRequest {
+  export type AsObject = {
+    event: string,
+    pathsList: Array<string>,
+  }
+}
+
+export class DirectoryResponse extends jspb.Message {
+  getStatus(): StatusMap[keyof StatusMap];
+  setStatus(value: StatusMap[keyof StatusMap]): void;
+
+  getDirectory(): string;
+  setDirectory(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): DirectoryResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: DirectoryResponse): DirectoryResponse.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: DirectoryResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): DirectoryResponse;
+  static deserializeBinaryFromReader(message: DirectoryResponse, reader: jspb.BinaryReader): DirectoryResponse;
+}
+
+export namespace DirectoryResponse {
+  export type AsObject = {
+    status: StatusMap[keyof StatusMap],
+    directory: string,
   }
 }
 

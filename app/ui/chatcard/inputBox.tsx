@@ -311,7 +311,7 @@ export default memo(function InputBox({ setSpinning }: any) {
                     </div>
                 )}
             />}
-            <div className={upload ? 'absolute right-8 bottom-16 w-64 min-h-36 bg-white mb-2 border rounded-2xl p-2 z-50' : 'hidden'}>
+            <div className={(upload && showUpload) ? 'absolute right-8 bottom-16 w-64 min-h-36 bg-white mb-2 border rounded-2xl p-2 z-50' : 'hidden'}>
                 <Upload
                     customRequest={uploadAction}
                     accept='image/*'
@@ -322,7 +322,7 @@ export default memo(function InputBox({ setSpinning }: any) {
                 >
                     <div className='flex gap-2 items-center'>
                         <Button icon={<UploadOutlined />}>上传</Button>
-                        <span>请选择文件</span>
+                        <span>请选择图片</span>
                     </div>
                 </Upload>
             </div>

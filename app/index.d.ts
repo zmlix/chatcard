@@ -165,9 +165,18 @@ type TPlugin = {
     disable?: boolean
 }
 
+type DirectoryTreeNode = {
+    title   : string     
+    key     : string      
+    children: Array<DirectoryTreeNode>
+    isLeaf :  boolean
+}
+
 type TPluginStoreState = {
     url: string
     plugins: Array<TPlugin>
+    directory?: DirectoryTreeNode
+    fileServer?: string
 }
 
 type TPluginStoreAction = {
@@ -176,6 +185,8 @@ type TPluginStoreAction = {
     setPlugins: (plugins: Array<TPlugin>) => void
     setPluginsAttr: (index: number, attr: string, value: any) => void
     findPluginName: (call: string) => string
+    setDirectory: (directory: DirectoryTreeNode) => void
+    setFileServer: (fileServer: string) => void
 }
 
 type TPluginStore = TPluginStoreState & TPluginStoreAction
@@ -197,5 +208,6 @@ export {
     TPluginInfo,
     TPluginStoreAction,
     TPluginStoreState,
-    TPluginStore
+    TPluginStore,
+    DirectoryTreeNode
 }

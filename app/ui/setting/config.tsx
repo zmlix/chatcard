@@ -76,8 +76,8 @@ function SettingSystemConfig() {
                 </div>
                 <div className="flex items-center justify-between p-2 hover:cursor-default border-b h-12">
                     <div>
-                        <Tooltip title="关闭文件上传功能" placement="bottomRight" arrow={false}>
-                            <span className="text-sm">文件上传图标</span>
+                        <Tooltip title="此功能仅对GPT-4-Vision多模态模型有效,可对上传图像进行提问" placement="bottomRight" arrow={false}>
+                            <span className="text-sm">图片上传</span>
                         </Tooltip>
                     </div>
                     <div>

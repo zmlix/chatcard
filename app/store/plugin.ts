@@ -1,12 +1,19 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import { persist, createJSONStorage } from 'zustand/middleware'
-import { TPlugin, TPluginStoreAction, TPluginStoreState } from '..'
+import { DirectoryTreeNode, TPlugin, TPluginStoreAction, TPluginStoreState } from '..'
 
 export const usePluginStore = create<TPluginStoreState & TPluginStoreAction>()(
     persist(immer((set, get) => ({
-        url: "http://127.0.0.1:5005",
+        url: "",
         plugins: [],
+        directory: {
+            title: "files",
+            key: "files",
+            children: Array<DirectoryTreeNode>(),
+            isLeaf: false
+        },
+        fileServer: "",
         setPlugin: (attr: string, value: any) =>
             set((state) => {
                 state = {
@@ -51,7 +58,15 @@ export const usePluginStore = create<TPluginStoreState & TPluginStoreAction>()(
                 return plugin.name
             }
             return ""
-        }
+        },
+        setDirectory: (directory: DirectoryTreeNode) =>
+            set((state) => {
+                state.directory = directory
+            }),
+        setFileServer: (fileServer: string) =>
+            set((state) => {
+                state.fileServer = fileServer
+            }),
     })), {
         name: 'chatcard-plugin',
         storage: createJSONStorage(() => localStorage),

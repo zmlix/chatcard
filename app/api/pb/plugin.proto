@@ -47,9 +47,22 @@ message ConnectRequest {}
 message ConnectResponse {
   Status status = 1;
   repeated Plugin plugins = 2;
+  string directory = 3;
+  string web = 4;
+}
+
+message DirectoryRequest {
+  string event = 1;
+  repeated string paths = 2;
+}
+
+message DirectoryResponse {
+  Status status = 1;
+  string directory = 2;
 }
 
 service PluginService {
   rpc Connect(ConnectRequest) returns (ConnectResponse);
   rpc Call(CallRequest) returns (stream CallResponse);
+  rpc Directory(DirectoryRequest) returns (DirectoryResponse);
 }

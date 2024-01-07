@@ -28,6 +28,15 @@ PluginService.Call = {
   responseType: plugin_pb.CallResponse
 };
 
+PluginService.Directory = {
+  methodName: "Directory",
+  service: PluginService,
+  requestStream: false,
+  responseStream: false,
+  requestType: plugin_pb.DirectoryRequest,
+  responseType: plugin_pb.DirectoryResponse
+};
+
 exports.PluginService = PluginService;
 
 function PluginServiceClient(serviceHost, options) {
@@ -100,6 +109,37 @@ PluginServiceClient.prototype.call = function call(requestMessage, metadata) {
     },
     cancel: function () {
       listeners = null;
+      client.close();
+    }
+  };
+};
+
+PluginServiceClient.prototype.directory = function directory(requestMessage, metadata, callback) {
+  if (arguments.length === 2) {
+    callback = arguments[1];
+  }
+  var client = grpc.unary(PluginService.Directory, {
+    request: requestMessage,
+    host: this.serviceHost,
+    metadata: metadata,
+    transport: this.options.transport,
+    debug: this.options.debug,
+    onEnd: function (response) {
+      if (callback) {
+        if (response.status !== grpc.Code.OK) {
+          var err = new Error(response.statusMessage);
+          err.code = response.status;
+          err.metadata = response.trailers;
+          callback(err, null);
+        } else {
+          callback(null, response.message);
+        }
+      }
+    }
+  });
+  return {
+    cancel: function () {
+      callback = null;
       client.close();
     }
   };

@@ -67,7 +67,56 @@ export function sendMessageApi(message: TMessage, resend?: boolean, fileList?: a
     setSendingMsgId(msgId)
     let msgContent = ""
     const call_func: Array<Tool> = []
-    let toolLog = ""
+
+    var payload = {
+        "model": message.model,
+        "messages": messages.filter((msg) => (!msg.skip && msg.type !== "img")).map((msg) => {
+            if (msg.role === 'assistant') {
+                if (msg.tool_calls?.length) {
+                    return {
+                        "role": msg.role,
+                        "content": msg.message,
+                        "tool_calls": msg.tool_calls
+                    }
+                }
+                return {
+                    "role": msg.role,
+                    "content": msg.message,
+                }
+            } else if (msg.role === 'tool' && msg.type === "tool") {
+                return {
+                    "role": msg.role,
+                    "content": msg.message,
+                    "name": msg.tool_call_function_name,
+                    "tool_call_id": msg.tool_call_id
+                }
+            } else {
+                return {
+                    "role": msg.role,
+                    "content": msg.message,
+                }
+            }
+        }),
+        "stream": true,
+        "top_p": chatConfig.top_p,
+        "temperature": chatConfig.temperature,
+        "presence_penalty": chatConfig.presence_penalty,
+        "frequency_penalty": chatConfig.frequency_penalty,
+        "max_tokens": chatConfig.max_tokens || undefined
+    }
+
+    if (!!useSystemStore.getState().config.plugin) {
+        const tools = usePluginStore.getState().plugins
+            .filter(plugin => !!!plugin.disable)
+            .map(plugin => plugin.info[0])
+        if (tools.length > 0) {
+            payload = Object.assign(payload, {
+                "tools": tools,
+                "tool_choice": "auto",
+            })
+        }
+    }
+
     const sse = new SSE(
         systemConfig.api_url,
         {
@@ -75,47 +124,7 @@ export function sendMessageApi(message: TMessage, resend?: boolean, fileList?: a
                 "Content-Type": "application/json",
                 'Authorization': `Bearer ${systemConfig.api_key}`,
             },
-            payload: JSON.stringify({
-                "model": message.model,
-                "messages": messages.filter((msg) => !msg.skip).map((msg) => {
-                    if (msg.role === 'assistant') {
-                        if (msg.tool_calls?.length) {
-                            return {
-                                "role": msg.role,
-                                "content": msg.message,
-                                "tool_calls": msg.tool_calls
-                            }
-                        }
-                        return {
-                            "role": msg.role,
-                            "content": msg.message,
-                        }
-                    } else if (msg.role === 'tool') {
-                        return {
-                            "role": msg.role,
-                            "content": msg.message,
-                            "name": msg.tool_call_function_name,
-                            "tool_call_id": msg.tool_call_id
-                        }
-                    } else {
-                        return {
-                            "role": msg.role,
-                            "content": msg.message,
-                        }
-                    }
-                }),
-                "tools": !!useSystemStore.getState().config.plugin ?
-                    usePluginStore.getState().plugins
-                        .filter(plugin => !!!plugin.disable)
-                        .map(plugin => plugin.info[0]) : [],
-                "tool_choice": !!useSystemStore.getState().config.plugin ? "auto" : undefined,
-                "stream": true,
-                "top_p": chatConfig.top_p,
-                "temperature": chatConfig.temperature,
-                "presence_penalty": chatConfig.presence_penalty,
-                "frequency_penalty": chatConfig.frequency_penalty,
-                "max_tokens": chatConfig.max_tokens || undefined
-            }),
+            payload: JSON.stringify(payload),
             method: "POST",
         })
     sse.addEventListener('message', function (e: any) {
