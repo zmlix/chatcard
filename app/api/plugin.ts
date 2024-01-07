@@ -32,6 +32,14 @@ export function connectPluginSystem() {
                 //@ts-ignore
                 const obj: ConnectResponse.AsObject = message.toObject()
                 console.log("ConnectResponse", obj)
+                if (obj.directory === "") {
+                    obj.directory = JSON.stringify({
+                        title: "files",
+                        key: "files",
+                        children: Array<DirectoryTreeNode>(),
+                        isLeaf: false
+                    })
+                }
                 const directory: DirectoryTreeNode = JSON.parse(obj.directory)
                 setDirectory(directory)
                 setFileServer(obj.web)
@@ -100,7 +108,6 @@ export function connectPlugin(msgId: number, call_func: Array<Tool> = [], index 
             }
             if (response.level === 3) {
                 if (response.log === "[image/png]" || response.log === "[image/jpeg]") {
-                    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", response)
                     const msg: TMessage = {
                         id: random32BitNumber(),
                         message: `![image](data:image/png;base64,${response.message})`,
