@@ -128,7 +128,7 @@ export function sendMessageApi(message: TMessage, resend?: boolean, fileList?: a
             method: "POST",
         })
     sse.addEventListener('message', function (e: any) {
-        console.log(e)
+        // console.log(e)
         if (e.data == '[DONE]' || !useSystemStore.getState().isSending) {
             useChatsStore.getState().setMessage(msgId, 'loading', false)
             if (resend === undefined || resend === false) {
@@ -137,7 +137,7 @@ export function sendMessageApi(message: TMessage, resend?: boolean, fileList?: a
             sse.close()
             return
         }
-        var payload
+        let payload
         try {
             payload = JSON.parse(e.data)
         } catch (error) {
@@ -177,7 +177,7 @@ export function sendMessageApi(message: TMessage, resend?: boolean, fileList?: a
         }
     })
     sse.addEventListener('readystatechange', (e: any) => {
-        console.log(e)
+        // console.log(e)
         if (e.readyState >= 2) {
             if (!useSystemStore.getState().isSending) {
                 return
@@ -202,7 +202,7 @@ export function sendMessageApi(message: TMessage, resend?: boolean, fileList?: a
         }
     })
     sse.addEventListener('error', (e: any) => {
-        console.log('error ', e)
+        // console.log('error ', e)
         sse.close()
         let error_msg
         try {

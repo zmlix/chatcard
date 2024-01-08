@@ -31,7 +31,7 @@ export function connectPluginSystem() {
             if (status === grpc.Code.OK && message) {
                 //@ts-ignore
                 const obj: ConnectResponse.AsObject = message.toObject()
-                console.log("ConnectResponse", obj)
+                // console.log("ConnectResponse", obj)
                 if (obj.directory === "") {
                     obj.directory = JSON.stringify({
                         title: "files",
@@ -45,7 +45,7 @@ export function connectPluginSystem() {
                 setFileServer(obj.web)
                 const pluginsList: Array<TPlugin> = []
                 for (const plugin of obj.pluginsList) {
-                    console.log(plugin)
+                    // console.log(plugin)
                     const pluginInfos: Array<TPluginInfo> = JSON.parse(plugin.info)
                     for (const pi of pluginInfos) {
                         const p: TPlugin = {
@@ -73,7 +73,7 @@ export function connectPluginSystem() {
 export function connectPlugin(msgId: number, call_func: Array<Tool> = [], index = 0, offset = 1) {
     useChatsStore.getState().setMessage(msgId, 'callStep', 1)
 
-    console.log(call_func)
+    // console.log(call_func)
 
     if (index === call_func.length) {
         const msg = useChatsStore.getState().getMessage(msgId)
@@ -85,7 +85,7 @@ export function connectPlugin(msgId: number, call_func: Array<Tool> = [], index 
 
     const callRequest = new CallRequest()
     const name = usePluginStore.getState().findPluginName(tool.function.name)
-    console.log("name: ", name)
+    // console.log("name: ", name)
     callRequest.setName(name)
     callRequest.setCall(tool.function.name)
     callRequest.setArguments(JSON.stringify(tool))
@@ -96,7 +96,7 @@ export function connectPlugin(msgId: number, call_func: Array<Tool> = [], index 
         onMessage: (message) => {
             //@ts-ignore
             const message_: CallResponse.AsObject = message.toObject()
-            console.log("CallResponse", message_)
+            // console.log("CallResponse", message_)
             const response: Message = JSON.parse(message_.response)
             useChatsStore.getState().setMessage(msgId, 'callStep', response.level)
             if (response.log !== "") {
@@ -174,12 +174,12 @@ function downloadMultipleFiles(fileUrls: Array<string>, fileNames: Array<string>
 }
 
 function uploadFile(fileServer: string | undefined, dirs: Array<string>, fileList: any) {
-    console.log("fileList", fileList)
+    // console.log("fileList", fileList)
     let formData = new FormData()
     fileList.forEach((file: any) => {
         formData.append('file', file.originFileObj);
     })
-    console.log(fileServer + "/upload")
+    // console.log(fileServer + "/upload")
     axios({
         method: 'post',
         url: fileServer + "/upload",
@@ -227,7 +227,7 @@ export function connectDirectory(event: string, paths: Array<string>, fileList: 
             if (status === grpc.Code.OK && message) {
                 //@ts-ignore
                 const obj: ConnectResponse.AsObject = message.toObject()
-                console.log("ConnectResponse", obj)
+                // console.log("ConnectResponse", obj)
                 const directory: DirectoryTreeNode = JSON.parse(obj.directory)
                 setDirectory(directory)
                 if (event === "refresh") {
