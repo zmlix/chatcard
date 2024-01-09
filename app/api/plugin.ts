@@ -31,7 +31,6 @@ export function connectPluginSystem() {
             if (status === grpc.Code.OK && message) {
                 //@ts-ignore
                 const obj: ConnectResponse.AsObject = message.toObject()
-                // console.log("ConnectResponse", obj)
                 if (obj.directory === "") {
                     obj.directory = JSON.stringify({
                         title: "files",
@@ -70,10 +69,10 @@ export function connectPluginSystem() {
 
 }
 
-export function connectPlugin(msgId: number, call_func: Array<Tool> = [], index = 0, offset = 1) {
+export function connectPlugin(msgId: number, resend?: boolean, call_func: Array<Tool> = [], index = 0, offset = 1) {
     useChatsStore.getState().setMessage(msgId, 'callStep', 1)
-
-    // console.log(call_func)
+    const setIsSending = useSystemStore.getState().setIsSending
+    const setSendingMsgId = useSystemStore.getState().setSendingMsgId
 
     if (index === call_func.length) {
         const msg = useChatsStore.getState().getMessage(msgId)
@@ -85,7 +84,6 @@ export function connectPlugin(msgId: number, call_func: Array<Tool> = [], index 
 
     const callRequest = new CallRequest()
     const name = usePluginStore.getState().findPluginName(tool.function.name)
-    // console.log("name: ", name)
     callRequest.setName(name)
     callRequest.setCall(tool.function.name)
     callRequest.setArguments(JSON.stringify(tool))
@@ -96,11 +94,10 @@ export function connectPlugin(msgId: number, call_func: Array<Tool> = [], index 
         onMessage: (message) => {
             //@ts-ignore
             const message_: CallResponse.AsObject = message.toObject()
-            // console.log("CallResponse", message_)
             const response: Message = JSON.parse(message_.response)
             useChatsStore.getState().setMessage(msgId, 'callStep', response.level)
             if (response.log !== "") {
-                useChatsStore.getState().addToolLog(msgId, `系统日志: ${response.log}`)
+                useChatsStore.getState().addToolLog(msgId, { key: "系统日志", value: response.log })
             }
             if (response.level < 0) {
                 useSystemStore.getState().setIsSending(false)
@@ -146,17 +143,25 @@ export function connectPlugin(msgId: number, call_func: Array<Tool> = [], index 
                     tool_call_function_name: tool.function.name,
                     tool_call_id: tool.id,
                 }
-                useChatsStore.getState().addToolLog(msgId, `调用结果: ${stream_message}`)
+                useChatsStore.getState().addToolLog(msgId, { key: "调用结果", value: stream_message })
                 useChatsStore.getState().setMessage(msgId, 'callStep', 4)
                 useChatsStore.getState().setMessage(msgId, 'loading', false)
                 useChatsStore.getState().addMessageWithOffset(msgId, msg, offset)
-                connectPlugin(msg.id, call_func, index + 1, offset)
+                connectPlugin(msg.id, resend, call_func, index + 1, offset)
                 return
             }
         },
         onEnd: (code: grpc.Code, msg: string | undefined, trailers: grpc.Metadata) => {
             console.log(code, msg, trailers)
             useChatsStore.getState().setMessage(msgId, 'loading', false)
+            if (resend === undefined || resend === false) {
+                useSystemStore.getState().setNeedScroll(true)
+            }
+            if (code !== grpc.Code.OK) {
+                useChatsStore.getState().setMessage(msgId, 'status', 'error')
+                useChatsStore.getState().setMessage(msgId, 'callStep', -2)
+                setIsSending(false)
+            }
         }
     })
 }
@@ -174,12 +179,10 @@ function downloadMultipleFiles(fileUrls: Array<string>, fileNames: Array<string>
 }
 
 function uploadFile(fileServer: string | undefined, dirs: Array<string>, fileList: any) {
-    // console.log("fileList", fileList)
     let formData = new FormData()
     fileList.forEach((file: any) => {
         formData.append('file', file.originFileObj);
     })
-    // console.log(fileServer + "/upload")
     axios({
         method: 'post',
         url: fileServer + "/upload",
@@ -227,7 +230,6 @@ export function connectDirectory(event: string, paths: Array<string>, fileList: 
             if (status === grpc.Code.OK && message) {
                 //@ts-ignore
                 const obj: ConnectResponse.AsObject = message.toObject()
-                // console.log("ConnectResponse", obj)
                 const directory: DirectoryTreeNode = JSON.parse(obj.directory)
                 setDirectory(directory)
                 if (event === "refresh") {

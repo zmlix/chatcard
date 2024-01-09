@@ -235,7 +235,7 @@ export const useChatsStore = create<TChatsStore>()(
           }
         })
       }),
-    addToolLog: (msgId: number, log: string, chatId: number | undefined = undefined) =>
+    addToolLog: (msgId: number, log: { key: string, value: string }, chatId: number | undefined = undefined) =>
       set((state) => {
         if (chatId === undefined) {
           chatId = get().currentChat
@@ -244,7 +244,7 @@ export const useChatsStore = create<TChatsStore>()(
           if (msg.id === msgId) {
             return {
               ...msg,
-              "toolLog": (msg.toolLog ? msg.toolLog : "") + log + "\n"
+              "toolLog": msg.toolLog ? [...msg.toolLog, log] : [log]
             }
           } else {
             return msg

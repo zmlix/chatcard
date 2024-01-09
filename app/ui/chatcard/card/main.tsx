@@ -7,7 +7,7 @@ import { useChatsStore } from '@/app/store/chats';
 import { TChatsStore } from '@/app';
 
 
-function CardCall({ log, step, fold, foldHandler }: any) {
+function CardCall({ toolLog, step, fold, foldHandler }: any) {
 
     const status = (step / Math.abs(step))
     const current = Math.abs(step) - 1
@@ -25,18 +25,35 @@ function CardCall({ log, step, fold, foldHandler }: any) {
     ]
 
     const items = steps.map((item) => ({ key: item.title, title: item.title }))
+    const [showArguments, setShowArguments] = useState(false)
 
     return (
         <div className='border p-1 hover:cursor-auto mb-1'>
             <span onClick={foldHandler}>
                 <Steps size='small' status={status < 0 ? 'error' : 'process'} current={current} items={items} />
             </span>
-            {!fold && <pre className='border mt-1 p-1 max-h-32 overflow-auto no-scrollbar bg-zinc-800 hover:cursor-text whitespace-pre-line'>
-                <Typography.Paragraph copyable className='text-xs text-white'>
-                    {log}
-                </Typography.Paragraph>
+            {!fold && <pre data-theme="dark" className='border mt-1 p-1 max-h-96 overflow-auto no-scrollbar bg-zinc-800 hover:cursor-text whitespace-pre-line'>
+                {toolLog.map((log: { key: string, value: string }, idx: number) => (
+                    log.key === "参数信息" ?
+                        <div key={idx}>
+                            <Typography.Paragraph copyable={{
+                                text: log.value
+                            }} className='text-xs text-white'>
+                                {log.key}:
+                                <Button type='text' size='small' style={{ color: 'white', fontSize: 12 }}
+                                    onClick={() => setShowArguments(!showArguments)}>{showArguments ? "显示代码" : "隐藏代码"}</Button>
+                                <div className={showArguments ? 'bg-zinc-700 text-white' : 'hidden'}>
+                                    <Markdown message={`\`\`\`\n${log.value}\n\`\`\``} classname={"-"}></Markdown>
+                                </div>
+                            </Typography.Paragraph>
+                        </div>
+                        : <Typography.Paragraph key={idx} copyable className='text-xs text-white'>
+                            {log.key}:{log.value}
+                        </Typography.Paragraph>
+                )
+                )}
             </pre>}
-        </div>
+        </div >
     )
 }
 
@@ -44,10 +61,6 @@ export default memo(function CardMain({ msg, message, edit, quitEditHandler, sub
 
     const { render, type, toolLog, callStep, fold } = msg
     const setMessage = useChatsStore((state: TChatsStore) => state.setMessage)
-
-    // const message = (typeof msg.message === 'string' ? msg.message :
-    //     (msg.message[0].text + '\n' + (msg.message.slice(1).map((m: any, idx: number) => `![image ${idx}](${m.image_url.url})`)).join('\n')))
-
     const { TextArea } = Input;
     const [text, setText] = useState(message)
     const markdownRef = useRef<HTMLDivElement>(null)
@@ -99,7 +112,7 @@ export default memo(function CardMain({ msg, message, edit, quitEditHandler, sub
     return (
         <div className='p-2 font-mono text-sm'>
             <div className=' hover:cursor-text overflow-auto'>
-                {type === 'tool' && <CardCall log={toolLog} step={callStep} fold={fold} foldHandler={foldHandler}></CardCall>}
+                {type === 'tool' && <CardCall toolLog={toolLog} step={callStep} fold={fold} foldHandler={foldHandler}></CardCall>}
                 {edit ? <div className='flex flex-col gap-1 items-end'>
                     <TextArea
                         value={text}

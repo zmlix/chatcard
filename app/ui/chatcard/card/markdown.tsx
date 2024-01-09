@@ -7,12 +7,14 @@ import remarkMath from 'remark-math'
 import 'katex/dist/katex.min.css'
 import '@/app/github-markdown-light.css'
 
-export default function Markdown({ message }: any) {
+export default function Markdown({ message, classname }: any) {
   const md = message
-
+  if (!!!classname) {
+    classname = 'markdown-body'
+  }
   return (
     <ReactMarkdown
-      className='markdown-body'
+      className={classname}
       remarkPlugins={[[remarkGfm, { singleTilde: false }], remarkMath]}
       rehypePlugins={[rehypeKatex]}
       urlTransform={(value: string) => value}

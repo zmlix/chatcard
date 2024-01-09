@@ -16,7 +16,7 @@ type TMessage = {
     tool_calls?: Array<Tool>
     tool_call_function_name?: string
     tool_call_id?: string
-    toolLog?: string
+    toolLog?: Array<{ key: string, value: string }>
     callStep?: number
 }
 
@@ -82,7 +82,7 @@ type TChatsStoreAction = {
     setCallMessage: (msgId: number, attr: string, value: any, chatId?: number) => void
     clearMessage: (chatId?: number) => void
     setMessage: (msgId: number, attr: string, value: any, chatId?: number) => void
-    addToolLog: (msgId: number, log: string, chatId?: number) => void
+    addToolLog: (msgId: number, log: { key: string, value: string }, chatId?: number) => void
     getConfig: (chatId?: number) => TChatConfig
     setConfig: (attr: string, value: any, chatId?: number) => void
     getMessage: (msgId: number, chatId?: number) => TMessage
@@ -166,10 +166,10 @@ type TPlugin = {
 }
 
 type DirectoryTreeNode = {
-    title   : string     
-    key     : string      
+    title: string
+    key: string
     children: Array<DirectoryTreeNode>
-    isLeaf :  boolean
+    isLeaf: boolean
 }
 
 type TPluginStoreState = {

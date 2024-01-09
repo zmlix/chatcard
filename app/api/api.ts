@@ -7,7 +7,7 @@ import { useSystemStore } from "../store/system";
 import axios from "axios";
 import { connectPlugin } from "./plugin";
 import { usePluginStore } from "../store/plugin";
-// http://localhost:5200/v1/chat/completions
+
 export function sendMessageApi(message: TMessage, resend?: boolean, fileList?: any[]) {
     const chatConfig: TChatConfig = useChatsStore.getState().getConfig()
     const systemConfig: TSystemConfig = useSystemStore.getState().config
@@ -62,7 +62,6 @@ export function sendMessageApi(message: TMessage, resend?: boolean, fileList?: a
         messages = useChatsStore.getState().getCurrentChat().messages.slice(0, index + 1)
         useChatsStore.getState().addMessage(msg, index + 1)
     }
-    // console.log(resend, message)
     setIsSending(true)
     setSendingMsgId(msgId)
     let msgContent = ""
@@ -128,7 +127,6 @@ export function sendMessageApi(message: TMessage, resend?: boolean, fileList?: a
             method: "POST",
         })
     sse.addEventListener('message', function (e: any) {
-        // console.log(e)
         if (e.data == '[DONE]' || !useSystemStore.getState().isSending) {
             useChatsStore.getState().setMessage(msgId, 'loading', false)
             if (resend === undefined || resend === false) {
@@ -163,7 +161,7 @@ export function sendMessageApi(message: TMessage, resend?: boolean, fileList?: a
                     type: tool_calls[0].type,
                     function: tool_calls[0].function,
                 }
-                useChatsStore.getState().setMessage(msgId, 'toolLog', `调用插件: ${tool_calls[0].function.name}\n`)
+                useChatsStore.getState().addToolLog(msgId, { key: "调用插件", value: `${tool_calls[0].function.name}` })
                 tool.function.arguments = tool_calls[0].arguments ? tool_calls[0].arguments : ""
                 call_func.push(tool)
             }
@@ -177,18 +175,19 @@ export function sendMessageApi(message: TMessage, resend?: boolean, fileList?: a
         }
     })
     sse.addEventListener('readystatechange', (e: any) => {
-        // console.log(e)
         if (e.readyState >= 2) {
             if (!useSystemStore.getState().isSending) {
                 return
             }
             if (call_func.length) {
-                useChatsStore.getState().setMessage(msgId, 'loading', true)
                 useChatsStore.getState().setMessage(msgId, 'status', 'success')
                 useChatsStore.getState().setMessage(msgId, 'type', 'tool')
                 useChatsStore.getState().setMessage(msgId, 'tool_calls', call_func)
-                useChatsStore.getState().addToolLog(msgId, `调用信息: ${JSON.stringify(call_func)}`)
-                connectPlugin(msgId, call_func)
+                useChatsStore.getState().addToolLog(msgId, { key: "调用信息", value: JSON.stringify(call_func) })
+                call_func.forEach(call => {
+                    useChatsStore.getState().addToolLog(msgId, { key: "参数信息", value: `${call.function.arguments}` })
+                })
+                connectPlugin(msgId, resend, call_func)
                 return
             }
             useChatsStore.getState().setMessage(msgId, 'loading', false)
@@ -202,7 +201,6 @@ export function sendMessageApi(message: TMessage, resend?: boolean, fileList?: a
         }
     })
     sse.addEventListener('error', (e: any) => {
-        // console.log('error ', e)
         sse.close()
         let error_msg
         try {
