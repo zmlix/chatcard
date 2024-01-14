@@ -4,9 +4,7 @@ import SettingConfig from "./config"
 import SettingPrompt from "./prompt"
 import SettingPlugin from "./plugin"
 import { useSystemStore } from "@/app/store/system"
-import { useChatsStore } from "@/app/store/chats"
-import { TSystemStore, TChatsStore } from '@/app'
-import { PlusOutlined } from "@ant-design/icons"
+import { TSystemStore } from '@/app'
 import { Button } from "antd"
 const SettingMain = dynamic(() => import('./main'), { ssr: false })
 const SettingFooter = dynamic(() => import('./footer'), { ssr: false })
@@ -18,7 +16,6 @@ export default function Setting() {
 
     const isShowSetting = useSystemStore((state: TSystemStore) => state.isShowSetting)
     const isShowCard = useSystemStore((state: TSystemStore) => state.isShowCard)
-    const newChat = useChatsStore((state: TChatsStore) => state.newChat)
     const [view, setView] = useState<TSettingView>('main')
 
     const footerProps = {
@@ -29,13 +26,9 @@ export default function Setting() {
     return (
         <div className={isShowSetting ? "flex flex-col gap-1 bg-white border rounded-2xl p-2" : 'hidden'}
             style={{ width: isShowCard ? 513 : '100%' }} suppressHydrationWarning>
+            <div className='hidden'> <Button></Button></div>
             {{
-                "main": <>
-                    <Button block onClick={newChat} icon={<PlusOutlined />}>新的聊天</Button>
-                    <div className='h-full overflow-auto no-scrollbar'>
-                        <SettingMain></SettingMain>
-                    </div>
-                </>,
+                "main": <SettingMain></SettingMain>,
                 "config": <SettingConfig></SettingConfig>,
                 "prompt": <SettingPrompt></SettingPrompt>,
                 "plugin": <SettingPlugin></SettingPlugin>
