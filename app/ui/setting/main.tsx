@@ -39,6 +39,19 @@ export default function SettingMain() {
 
     const ref = useRef<HTMLDivElement>(null)
 
+    setTimeout(() => {
+        if (ref.current && ref.current.parentElement) {
+            const card = ref.current.children[0].children[currentChat].getBoundingClientRect()
+            const main = ref.current.parentElement.getBoundingClientRect()
+            if (!(card.top >= main.top && (card.top + card.height) <= (main.top + main.height))) {
+                console.log(ref.current.children[0].children[currentChat].scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center',
+                }))
+            }
+        }
+    }, 100);
+
     const createNewChatHandler = () => {
         newChat()
         setTimeout(() => {
