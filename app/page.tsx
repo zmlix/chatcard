@@ -11,6 +11,8 @@ export default function App() {
   const initPrompts = useSystemStore((state: TSystemStore) => state.initPrompts)
   const setIsShowSetting = useSystemStore((state: TSystemStore) => state.setIsShowSetting)
   const setIsShowCard = useSystemStore((state: TSystemStore) => state.setIsShowCard)
+  const isShowCard = useSystemStore((state: TSystemStore) => state.isShowCard)
+  const isShowSetting = useSystemStore((state: TSystemStore) => state.isShowSetting)
 
   useEffect(() => {
     console.log("initPrompts")
@@ -20,16 +22,6 @@ export default function App() {
     }
     setIsShowCard(true)
   }, [initPrompts, setIsShowSetting, setIsShowCard])
-
-  useEffect(() => {
-    console.log("resize...")
-    window.addEventListener('resize', () => {
-      if (window.innerWidth <= 768) {
-        setIsShowSetting(false)
-      }
-      setIsShowCard(true)
-    })
-  }, [setIsShowSetting, setIsShowCard])
 
   return (
     <div className="m-0 p-5 w-full h-full bg-zinc-50">

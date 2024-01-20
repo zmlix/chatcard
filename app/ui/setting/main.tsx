@@ -17,6 +17,8 @@ export default function SettingMain() {
     const moveChats = useChatsStore((state: TChatsStore) => state.moveChats)
     const setCurrentChat = useChatsStore((state: TChatsStore) => state.setCurrentChat)
     const newChat = useChatsStore((state: TChatsStore) => state.newChat)
+    const setIsShowSetting = useSystemStore((state: TSystemStore) => state.setIsShowSetting)
+    const setIsShowCard = useSystemStore((state: TSystemStore) => state.setIsShowCard)
 
     const api_url = useSystemStore((state: TSystemStore) => state.config.api_url)
 
@@ -44,10 +46,10 @@ export default function SettingMain() {
             const card = ref.current.children[0].children[currentChat].getBoundingClientRect()
             const main = ref.current.parentElement.getBoundingClientRect()
             if (!(card.top >= main.top && (card.top + card.height) <= (main.top + main.height))) {
-                console.log(ref.current.children[0].children[currentChat].scrollIntoView({
+                ref.current.children[0].children[currentChat].scrollIntoView({
                     behavior: 'smooth',
                     block: 'center',
-                }))
+                })
             }
         }
     }, 100);
@@ -58,6 +60,10 @@ export default function SettingMain() {
             if (ref.current) {
                 ref.current.scrollTop = ref.current.scrollHeight
                 setCurrentChat()
+            }
+            if (window.innerWidth <= 768) {
+                setIsShowSetting(false)
+                setIsShowCard(true)
             }
         }, 300);
     }
